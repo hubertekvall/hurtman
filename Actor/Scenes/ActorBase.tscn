@@ -1,3 +1,26 @@
-[gd_scene format=3 uid="uid://bpwqc4mhur4ll"]
+[gd_scene load_steps=3 format=3 uid="uid://bpwqc4mhur4ll"]
+
+[ext_resource type="Script" uid="uid://bj5uyuya0qv80" path="res://Actor/Actor.cs" id="1_527vi"]
+[ext_resource type="Script" uid="uid://ch6x5u1ojinni" path="res://Actor/Components/CharacterComponent.cs" id="2_527vi"]
 
 [node name="ActorBase" type="Node3D"]
+script = ExtResource("1_527vi")
+
+[node name="OnCreationEffect" type="Node" parent="."]
+
+[node name="OnDeathEffect" type="Node" parent="."]
+
+[node name="OnCollisionEffect" type="Node" parent="."]
+
+[node name="OnHitEffect" type="Node" parent="."]
+
+[node name="CharacterComponent" type="Node" parent="." node_paths=PackedStringArray("Body3D", "Actor")]
+script = ExtResource("2_527vi")
+Body3D = NodePath("CharacterBody3D")
+Actor = NodePath("..")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="CharacterComponent"]
+
+[node name="RemoteTransform3D" type="RemoteTransform3D" parent="CharacterComponent/CharacterBody3D"]
+remote_path = NodePath("../../..")
+update_scale = false
