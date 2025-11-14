@@ -18,7 +18,7 @@ public abstract partial class Instantiator : Node3D
 	{
 		return message switch
 		{
-			CollisionMessage collisionMessage => InstantiateWithTransform(collisionMessage.CollisionPosition, collisionMessage.Owner.GlobalBasis),
+			CollisionMessage collisionMessage => InstantiateWithTransform(collisionMessage.CollisionPosition, collisionMessage.Sender.GlobalBasis),
 			_ => Instantiate()
 		};
 	}

@@ -20,7 +20,3 @@ Body3D = NodePath("CharacterBody3D")
 Actor = NodePath("..")
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="CharacterComponent"]
-
-[node name="RemoteTransform3D" type="RemoteTransform3D" parent="CharacterComponent/CharacterBody3D"]
-remote_path = NodePath("../../..")
-update_scale = false

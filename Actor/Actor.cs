@@ -1,9 +1,10 @@
 using Godot;
 using System;
 using Godot.Collections;
-using Array = Godot.Collections.Array;
+
 
 namespace Hurtman.Actor;
+[GlobalClass]
 [Tool]
 public partial class Actor : Node3D
 {
@@ -15,26 +16,25 @@ public partial class Actor : Node3D
 
 	[Signal]
 	public delegate void OnDeathEventHandler();
-
-	[Signal]
-	public delegate void OnCollisionEventHandler(CollisionMessage message);
 	
 	[Signal]
-	public delegate void OnHitEventHandler(DamageMessage message);
-
-	[Signal]
 	public delegate void OnMessageEventHandler(ActorMessage message);
-
+	
+	[Signal]
+	public delegate void OnMessageSentEventHandler(ActorMessage message);
 
 	
 	public Array<Node> Components { get; set; } = new Array<Node>();
 	
 	public override void _Ready()
 	{
-		foreach (Node component in Components)
+		foreach (Node component in GetChildren())
 		{
-			AddChild(component);
+			if(component is ActorComponent actorComponent){
+				Components.Add(actorComponent);
+			}
 		}
+
 		
 		CallDeferred("_PostReady");
 		EmitSignalOnCreation();
@@ -46,6 +46,8 @@ public partial class Actor : Node3D
 	
 	public override void _Process(double delta)
 	{
+		if (Engine.IsEditorHint()) return;
+		
 		foreach (var component in Components)
 		{
 			if (component is ActorComponent actorComponent)
@@ -57,6 +59,8 @@ public partial class Actor : Node3D
 
 	public override void _PhysicsProcess(double delta)
 	{
+		if (Engine.IsEditorHint()) return;
+		
 		foreach (var component in Components)
 		{
 			if (component is ActorComponent actorComponent)
@@ -64,19 +68,14 @@ public partial class Actor : Node3D
 				actorComponent.PhysicsTick((float)delta);
 			}
 		}
+		
 	}
 	
 	
 	public void ReceiveMessage(ActorMessage message)
 	{
-		if (message is DamageMessage damageMessage)
-		{   
-			EmitSignalOnHit(damageMessage);
-		}
-		else if (message is CollisionMessage collisionMessage)
-		{
-			EmitSignalOnCollision(collisionMessage);
-		}
+		
+		EmitSignalOnMessage(message);
 	}
 
 
@@ -86,5 +85,21 @@ public partial class Actor : Node3D
 		EmitSignalOnDeath();
 		
 		QueueFree();
+	}
+	
+	
+	public void RegisterComponent(ActorComponent component){
+		Components.Add(component);
+	}
+
+
+
+
+	public void SendMessage(ActorMessage message, Actor recipient)
+	{
+	
+		message.Sender = this;
+		EmitSignalOnMessageSent(message);
+		recipient.ReceiveMessage(message);
 	}
 }

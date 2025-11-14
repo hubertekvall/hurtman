@@ -1,10 +1,12 @@
-[gd_scene load_steps=17 format=3 uid="uid://cyn1yl25ni5vj"]
+[gd_scene load_steps=19 format=3 uid="uid://cyn1yl25ni5vj"]
 
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="1_ykrsh"]
 [ext_resource type="Script" uid="uid://csjccrhj5wnx7" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="2_6uqi0"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="3_ppyta"]
 [ext_resource type="Script" uid="uid://b8hhnqsugykly" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="4_ykrsh"]
 [ext_resource type="Script" uid="uid://cuffvge5ad4aa" path="res://addons/phantom_camera/scripts/resources/phantom_camera_noise_3d.gd" id="5_g14j6"]
+[ext_resource type="PackedScene" uid="uid://dtoh16kp15e8h" path="res://Actors/Bullets/BasicBullet.tscn" id="6_g14j6"]
+[ext_resource type="PackedScene" uid="uid://carp5vcbo4acm" path="res://ManGuy.tscn" id="7_vbegm"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_00tp4"]
 size = Vector3(16, 1, 16)
@@ -80,7 +82,7 @@ metadata/_custom_type_script = "uid://cuffvge5ad4aa"
 mesh = SubResource("BoxMesh_00tp4")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(0.7666, -0.36801946, 0.52619994, -0.0019752765, 0.818111, 0.5750571, -0.6421221, -0.44187808, 0.62643677, 26, 33.6, 38)
+transform = Transform3D(0.76725966, -0.36963543, 0.5241015, -0.004322504, 0.81420285, 0.58056444, -0.6413221, -0.44770908, 0.62310714, 26, 33.6, 38)
 fov = 20.0
 
 [node name="PhantomCameraHost" type="Node" parent="Camera3D"]
@@ -103,7 +105,7 @@ speed_scale = 0.25
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_vbegm")
 
-[node name="PhantomCamera3D" type="Node3D" parent="." node_paths=PackedStringArray("follow_target", "look_at_target", "look_at_targets")]
+[node name="PhantomCamera3D" type="Node3D" parent="." node_paths=PackedStringArray("follow_target", "look_at_target")]
 transform = Transform3D(0.7700205, -0.3733485, 0.5173755, 0, 0.8109105, 0.58516955, -0.63801694, -0.45059305, 0.62441874, 26, 33.6, 38)
 top_level = true
 script = ExtResource("2_6uqi0")
@@ -111,7 +113,6 @@ follow_mode = 2
 follow_target = NodePath("../MeshInstance3D2")
 look_at_mode = 3
 look_at_target = NodePath("../MeshInstance3D2")
-look_at_targets = [NodePath("../MeshInstance3D"), NodePath("../MeshInstance3D2")]
 tween_resource = SubResource("Resource_ykrsh")
 camera_3d_resource = SubResource("Resource_vbegm")
 follow_offset = Vector3(32, 32, 32)
@@ -123,3 +124,9 @@ dead_zone_height = 0.275
 show_viewfinder_in_play = true
 noise = SubResource("Resource_ehkex")
 metadata/_custom_type_script = "uid://csjccrhj5wnx7"
+
+[node name="BasicBullet" parent="." instance=ExtResource("6_g14j6")]
+transform = Transform3D(0.99999917, 0, 0, 0, 0.99999917, 0, 0, 0, 0.99999917, 0, 2.3392034, 0)
+
+[node name="Node3D" parent="." instance=ExtResource("7_vbegm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3248217, -9.881363)
