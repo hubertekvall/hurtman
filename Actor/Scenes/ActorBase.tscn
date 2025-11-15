@@ -1,18 +1,30 @@
-[gd_scene load_steps=3 format=3 uid="uid://bpwqc4mhur4ll"]
+[gd_scene load_steps=7 format=3 uid="uid://bpwqc4mhur4ll"]
 
 [ext_resource type="Script" uid="uid://bj5uyuya0qv80" path="res://Actor/Actor.cs" id="1_527vi"]
 [ext_resource type="Script" uid="uid://ch6x5u1ojinni" path="res://Actor/Components/CharacterComponent.cs" id="2_527vi"]
+[ext_resource type="Script" uid="uid://dwwu3f0qyuv7v" path="res://Actor/Instantiators/SpawnInstantiator.cs" id="2_iyckv"]
+[ext_resource type="Script" uid="uid://bi013gxnyeqmi" path="res://Actor/Instantiators/DeathInstantiator.cs" id="3_5mpvl"]
+[ext_resource type="Script" uid="uid://dtjf2o2awnnfd" path="res://Actor/Instantiators/CollisionInstantiator.cs" id="4_vncdy"]
+[ext_resource type="Script" uid="uid://di43l3ylq7cjd" path="res://Actor/Instantiators/DamageInstantiator.cs" id="5_bcn8j"]
 
 [node name="ActorBase" type="Node3D"]
 script = ExtResource("1_527vi")
 
-[node name="OnCreationEffect" type="Node" parent="."]
+[node name="OnCreationEffect" type="Node" parent="." node_paths=PackedStringArray("Actor")]
+script = ExtResource("2_iyckv")
+Actor = NodePath("..")
 
-[node name="OnDeathEffect" type="Node" parent="."]
+[node name="OnDeathEffect" type="Node" parent="." node_paths=PackedStringArray("Actor")]
+script = ExtResource("3_5mpvl")
+Actor = NodePath("..")
 
-[node name="OnCollisionEffect" type="Node" parent="."]
+[node name="OnCollisionEffect" type="Node" parent="." node_paths=PackedStringArray("Actor")]
+script = ExtResource("4_vncdy")
+Actor = NodePath("..")
 
-[node name="OnHitEffect" type="Node" parent="."]
+[node name="OnHitEffect" type="Node" parent="." node_paths=PackedStringArray("Actor")]
+script = ExtResource("5_bcn8j")
+Actor = NodePath("..")
 
 [node name="CharacterComponent" type="Node" parent="." node_paths=PackedStringArray("Body3D", "Actor")]
 script = ExtResource("2_527vi")

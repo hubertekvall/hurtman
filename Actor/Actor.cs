@@ -74,30 +74,36 @@ public partial class Actor : Node3D
 	
 	public void ReceiveMessage(ActorMessage message)
 	{
-		
 		EmitSignalOnMessage(message);
 	}
 
 
-	public void Kill()
+	public void Kill(DeathCause cause)
 	{
 		if (IsQueuedForDeletion()) return;
 		EmitSignalOnDeath();
+		BroadCastMessage(new DeathMessage(cause));
+		
 		
 		QueueFree();
 	}
 	
 	
-	public void RegisterComponent(ActorComponent component){
+	public void RegisterComponent(ActorComponent component)
+	{
 		Components.Add(component);
 	}
 
+
+	public void BroadCastMessage(ActorMessage message)
+	{
+		SendMessage(message, this);
+	}
 
 
 
 	public void SendMessage(ActorMessage message, Actor recipient)
 	{
-	
 		message.Sender = this;
 		EmitSignalOnMessageSent(message);
 		recipient.ReceiveMessage(message);

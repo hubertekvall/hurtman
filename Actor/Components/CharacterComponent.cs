@@ -57,7 +57,7 @@ public partial class CharacterComponent : ActorComponent
 		Actor.Basis = Body3D.Basis;
 	}
 
-	public override void OnMessage(ActorMessage message) { }
+	protected override void OnMessage(ActorMessage message) { }
 
 
 	public virtual void AddVelocities(float delta)
@@ -89,12 +89,29 @@ public partial class CharacterComponent : ActorComponent
 	{
 		if (collision.GetCollider() is not CollisionObject3D collisionObject) return;
 	
-		if (collisionObject.GetParent() is CharacterComponent characterComponent)
+		var parent = collisionObject.GetParent();
+		var actor = (parent as CharacterComponent)?.Actor;
+		ActorMessage collisionMessage = null;
+		
+		if (actor is null)
 		{
-			
-			var collisionMessage = new CollisionMessage(characterComponent.Actor, collision.GetPosition(), collision.GetNormal());
-			Actor.SendMessage(collisionMessage, Actor);
+			collisionMessage = new CollisionMessage(
+				collisionObject,
+				collision.GetPosition(),
+				collision.GetNormal()
+			);
 		}
+		else
+		{
+			collisionMessage = new ActorCollisionMessage(
+				actor,
+				collisionObject,
+				collision.GetPosition(),
+				collision.GetNormal()
+			);
+		}
+		
+		Actor.SendMessage(collisionMessage, Actor);
 	}
 	
 	
@@ -118,7 +135,7 @@ public partial class CharacterComponent : ActorComponent
 			var newBasis = new Basis(rightVector.Normalized(), upVector.Normalized(), forwardVector.Normalized());
 			var xForm = new Transform3D(newBasis.Orthonormalized(), Body3D.Position);
 
-			Body3D.GlobalTransform = Body3D.GlobalTransform.InterpolateWith(xForm, 2.0f * delta);
+			Body3D.GlobalTransform = Body3D.GlobalTransform.InterpolateWith(xForm, 10.0f * delta);
 		}
 
 		// Update LookVector based on movement (if that's your design)

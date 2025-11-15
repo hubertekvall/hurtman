@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://cmr4rlv7qu0rx"]
+
+[ext_resource type="PackedScene" uid="uid://bpwqc4mhur4ll" path="res://Actor/Scenes/ActorBase.tscn" id="1_4qel0"]
+[ext_resource type="Script" uid="uid://cir1x4fkl1ipi" path="res://Actor/Components/LifetimeComponent.cs" id="2_rxsuq"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_rxsuq"]
+
+[node name="ActorBase" instance=ExtResource("1_4qel0")]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." index="5"]
+transform = Transform3D(3.0262213, 0, 0, 0, 3.0262213, 0, 0, 0, 3.0262213, 0, 0, 0)
+mesh = SubResource("BoxMesh_rxsuq")
+
+[node name="LifetimeComponent" type="Node" parent="." index="6" node_paths=PackedStringArray("Actor")]
+script = ExtResource("2_rxsuq")
+Lifetime = 0.5
+Actor = NodePath("..")
+metadata/_custom_type_script = "uid://cir1x4fkl1ipi"

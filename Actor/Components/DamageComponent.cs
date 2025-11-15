@@ -12,13 +12,12 @@ public partial class  DamageComponent : ActorComponent
 	
 	[Export(PropertyHint.Range, "1.0, 10.0")]
 	public double Spread { get; set; }
-	
 
 
-	public override void OnMessage(ActorMessage message)
+	protected override void OnMessage(ActorMessage message)
 	{
 
-		if (message is not CollisionMessage collisionMessage) return;
+		if (message is not ActorCollisionMessage collisionMessage) return;
 		
 		
 		

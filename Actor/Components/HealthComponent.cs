@@ -16,7 +16,7 @@ public partial class HealthComponent : ActorComponent
 		CurrentHealth = MaxHealth;
 	}
 
-	public override void OnMessage(ActorMessage message)
+	protected override void OnMessage(ActorMessage message)
 	{
 		if (message is not DamageMessage damageMessage) return;
 		if (CurrentHealth <= 0.0) return;
@@ -24,7 +24,7 @@ public partial class HealthComponent : ActorComponent
 		
 		CurrentHealth -= damageMessage.Damage;
    
-		if (CurrentHealth <= 0.0) Actor.Kill();
+		if (CurrentHealth <= 0.0) Actor.Kill(DeathCause.Damage);
 	}
 
 }

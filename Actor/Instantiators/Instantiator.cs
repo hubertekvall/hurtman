@@ -3,7 +3,8 @@ using Godot;
 using Godot.Collections;
 namespace Hurtman.Actor;
 
-public abstract partial class Instantiator : Node3D
+[GlobalClass]
+public  partial class Instantiator : ActorComponent
 {
 	[Export]
 	public PackedScene ActorScene { get; set; }
@@ -12,49 +13,47 @@ public abstract partial class Instantiator : Node3D
 	public bool Local  { get; set; }
 
 
-
-
-	public virtual Actor InstantiateWithMessage(ActorMessage message)
-	{
-		return message switch
-		{
-			CollisionMessage collisionMessage => InstantiateWithTransform(collisionMessage.CollisionPosition, collisionMessage.Sender.GlobalBasis),
-			_ => Instantiate()
-		};
-	}
+	
 	
 
-	public Actor InstantiateWithTransform(Vector3 position, Basis basis)
+
+	public Actor Instantiate(Vector3 position, Basis basis)
 	{
+	
 		var actor = Instantiate();
+	
 
 		actor.Position = position;
 		actor.Basis = basis;
 
+
+		
 		return actor;
 	}
 	
 	public Actor Instantiate()
 	{
+		
 		var instance = ActorScene.Instantiate();
 		if (instance is not Actor actor) throw new Exception("Scene root must be of the Actor class");
 		
-		actor.Components = GetChildren().Duplicate();
+		foreach(var component in GetChildren().Duplicate()){
+			actor.AddChild(component);
+		}
 		
 		if (Local)
 		{
-			AddChild(actor);
+			Actor.AddChild(actor);
 		}
 		else
 		{
-			actor.Position = GlobalPosition;
-			actor.Basis = GlobalBasis;
 			GetViewport().AddChild(actor);
 		}
 		
 		return actor;
 	}
 
-
+	
+	
 
 }

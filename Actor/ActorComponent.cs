@@ -9,7 +9,8 @@ public abstract partial class ActorComponent : Node
 
     public virtual void PhysicsTick(float delta){}
     public virtual void ProcessTick(float delta){}
-    public virtual void OnMessage(ActorMessage message){}
+    protected virtual void OnMessage(ActorMessage message){}
+  
     protected virtual void Setup(){}
     
     public override void _Ready()

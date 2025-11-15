@@ -6,10 +6,12 @@
 [ext_resource type="Script" uid="uid://b8hhnqsugykly" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="4_ykrsh"]
 [ext_resource type="Script" uid="uid://cuffvge5ad4aa" path="res://addons/phantom_camera/scripts/resources/phantom_camera_noise_3d.gd" id="5_g14j6"]
 [ext_resource type="PackedScene" uid="uid://dtoh16kp15e8h" path="res://Actors/Bullets/BasicBullet.tscn" id="6_g14j6"]
-[ext_resource type="PackedScene" uid="uid://carp5vcbo4acm" path="res://ManGuy.tscn" id="7_vbegm"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_00tp4"]
 size = Vector3(16, 1, 16)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_g14j6"]
+data = PackedVector3Array(-8, 0.5, 8, 8, 0.5, 8, -8, -0.5, 8, 8, 0.5, 8, 8, -0.5, 8, -8, -0.5, 8, 8, 0.5, -8, -8, 0.5, -8, 8, -0.5, -8, -8, 0.5, -8, -8, -0.5, -8, 8, -0.5, -8, 8, 0.5, 8, 8, 0.5, -8, 8, -0.5, 8, 8, 0.5, -8, 8, -0.5, -8, 8, -0.5, 8, -8, 0.5, -8, -8, 0.5, 8, -8, -0.5, -8, -8, 0.5, 8, -8, -0.5, 8, -8, -0.5, -8, 8, 0.5, 8, -8, 0.5, 8, 8, 0.5, -8, -8, 0.5, 8, -8, 0.5, -8, 8, 0.5, -8, -8, -0.5, 8, 8, -0.5, 8, -8, -0.5, -8, 8, -0.5, 8, 8, -0.5, -8, -8, -0.5, -8)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_0m0f1"]
 
@@ -81,8 +83,13 @@ metadata/_custom_type_script = "uid://cuffvge5ad4aa"
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_00tp4")
 
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_g14j6")
+
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(0.76725966, -0.36963543, 0.5241015, -0.004322504, 0.81420285, 0.58056444, -0.6413221, -0.44770908, 0.62310714, 26, 33.6, 38)
+transform = Transform3D(0.77560234, -0.37765816, 0.5057819, 0.0044710804, 0.8045412, 0.59388006, -0.631206, -0.45835337, 0.62569255, 26, 33.6, 38)
 fov = 20.0
 
 [node name="PhantomCameraHost" type="Node" parent="Camera3D"]
@@ -126,7 +133,4 @@ noise = SubResource("Resource_ehkex")
 metadata/_custom_type_script = "uid://csjccrhj5wnx7"
 
 [node name="BasicBullet" parent="." instance=ExtResource("6_g14j6")]
-transform = Transform3D(0.99999917, 0, 0, 0, 0.99999917, 0, 0, 0, 0.99999917, 0, 2.3392034, 0)
-
-[node name="Node3D" parent="." instance=ExtResource("7_vbegm")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3248217, -9.881363)
+transform = Transform3D(0.99999917, 0, 0, 0, 0.99999917, 0, 0, 0, 0.99999917, 0, 6.3392034, 5)
