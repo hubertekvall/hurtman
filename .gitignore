@@ -2,6 +2,7 @@
 *.godot
 .godot/
 .nomedia
+*.uid
 
 
 # Godot-specific ignores
