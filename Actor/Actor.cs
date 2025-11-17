@@ -18,6 +18,12 @@ public partial class Actor : Node3D
 	public delegate void OnDeathEventHandler();
 	
 	[Signal]
+	public delegate void OnCollisionEventHandler(CollisionMessage message);
+	
+	[Signal]
+	public delegate void OnDamageEventHandler(DamageMessage message);
+	
+	[Signal]
 	public delegate void OnMessageEventHandler(ActorMessage message);
 	
 	[Signal]
@@ -75,6 +81,14 @@ public partial class Actor : Node3D
 	public void ReceiveMessage(ActorMessage message)
 	{
 		EmitSignalOnMessage(message);
+		
+		if(message is CollisionMessage collisionMessage){
+			EmitSignalOnCollision(collisionMessage);
+		}
+		else if(message is DamageMessage damageMessage){
+			EmitSignalOnDamage(damageMessage);
+		}
+		
 	}
 
 
