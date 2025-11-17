@@ -1,15 +1,12 @@
 # Godot 4+ specific ignores
-*.godot
 .godot/
 .nomedia
 *.uid
-
 
 # Godot-specific ignores
 .import/
 export.cfg
 export_credentials.cfg
-.editorconfig
 
 # Imported translations (automatically generated from CSV files)
 *.translation
@@ -18,10 +15,3 @@ export_credentials.cfg
 .mono/
 data_*/
 mono_crash.*.json
-*.csproj
-*.sln
-*.user
-
-
-#Rider-specific
-.idea/.idea.Hurtman/.idea
