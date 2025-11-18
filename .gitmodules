@@ -1,0 +1,3 @@
+[submodule "phantom-camera"]
+	path = phantom-camera
+	url = https://github.com/ramokz/phantom-camera
