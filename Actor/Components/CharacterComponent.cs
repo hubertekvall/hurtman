@@ -1,145 +1,64 @@
-using System;
-using System.Reflection.Metadata;
 using Godot;
-using Godot.Collections;
 
 namespace Hurtman.Actor;
 
 [GlobalClass]
-
 [Tool]
-public partial class CharacterComponent : ActorComponent    
+public partial class CharacterMovementComponent : MovementComponent
 {
-	
-	[Export] public Vector3 Gravity { get; set; }
-	
-	[Export] public Vector3 LocalImpulse{get; set;}
-	[Export] public Vector3 LocalForce{get; set;}
-	[Export] public Vector3 Impulse {get; set;}
-	[Export] public Vector3 Force {get; set;}
-	
-	
-	[Export] public float  Drag { get; set; } = 0.95f;
-	
-	[Export] public CharacterBody3D Body3D { get; set; }
-	
-	public float Speed { get; set; }
-	public Vector3 Acceleration { get; set; }
-	public Vector3 PreviousVelocity {get; set;}
-	public Vector3 LookVector{get; set;}
+    private CharacterBody3D _body3D;
 
-	protected override void Setup()
-	{
-		if (Body3D is null)
-		{
-			Body3D = new CharacterBody3D();
-			AddChild(Body3D);
-			Body3D.SetOwner(GetTree().EditedSceneRoot);
-		}
-		
-		Body3D.Position = Actor.Position;
-		Body3D.Basis = Actor.Basis;
-		var relativeVelocity = Body3D.Basis * (LocalImpulse);
-		var initialVelocity = Impulse + relativeVelocity;
-		Body3D.Velocity = relativeVelocity + initialVelocity;
-	}
+    [Export]
+    public CharacterBody3D CharacterBody
+    {
+        get => _body3D;
+        set => _body3D = value;
+    }
 
-	public override void PhysicsTick(float delta)
-	{
-		AddVelocities(delta);
-		LookAt(delta);
-		MoveCharacter(delta);
-	}
+    protected override CollisionObject3D Body3D => _body3D;
 
-	public override void ProcessTick(float delta) 
-	{ 
-		Actor.Position = Body3D.Position;
-		Actor.Basis = Body3D.Basis;
-	}
+    public override void SetupBody()
+    {
+        if (_body3D is null)
+        {
+            _body3D = new CharacterBody3D();
+            AddChild(_body3D);
+            _body3D.SetOwner(GetTree().EditedSceneRoot);
+        }
+        
+        _body3D.Position = Actor.Position;
+        _body3D.Basis = Actor.Basis;
+    }
 
-	protected override void OnMessage(ActorMessage message) { }
+    public override void InitializeVelocities()
+    {
+        var relativeVelocity = _body3D.Basis * LocalImpulse;
+        var initialVelocity = Impulse + relativeVelocity;
+        _body3D.Velocity = initialVelocity;
+    }
 
+    public override T GetBody<T>()
+    {
+        return _body3D as T;
+    }
 
-	public virtual void AddVelocities(float delta)
-	{
-		PreviousVelocity = Body3D.Velocity;
-		var relativeConstantVelocity = Body3D.Basis * LocalForce;	
-		Body3D.Velocity += (Acceleration * Speed) * delta;
-		Body3D.Velocity += Gravity * delta;
-		Body3D.Velocity += relativeConstantVelocity * delta;
-		Body3D.Velocity += Force * delta;
-		Body3D.Velocity = Body3D.Velocity.Lerp(Vector3.Zero, Drag * delta);
-	}
+    protected override void MoveBody(float delta)
+    {
+        if (!_body3D.MoveAndSlide()) return;
 
-	public virtual void MoveCharacter(float delta)
-	{
-		if (!Body3D.MoveAndSlide()) return;
-	
-		for (int c = 0; c < Body3D.GetSlideCollisionCount(); c++)
-		{
-			
-			
-			var collision = Body3D.GetSlideCollision(c);
-			
-			HandleCollision(collision);
-		}
-	}
-
-	public virtual void HandleCollision(KinematicCollision3D collision)
-	{
-		if (collision.GetCollider() is not CollisionObject3D collisionObject) return;
-	
-		var parent = collisionObject.GetParent();
-		var actor = (parent as CharacterComponent)?.Actor;
-		ActorMessage collisionMessage = null;
-		
-		if (actor is null)
-		{
-			collisionMessage = new CollisionMessage(
-				collisionObject,
-				collision.GetPosition(),
-				collision.GetNormal()
-			);
-		}
-		else
-		{
-			collisionMessage = new ActorCollisionMessage(
-				actor,
-				collisionObject,
-				collision.GetPosition(),
-				collision.GetNormal()
-			);
-		}
-		
-		Actor.SendMessage(collisionMessage, Actor);
-	}
-	
-	
-	public virtual void LookAt(float delta)
-	{
-		var normalizedLook = LookVector.Normalized();
-		var forwardVector = -normalizedLook;
-
-		// Choose a suitable up reference depending on direction
-		Vector3 refUp = (Mathf.Abs(forwardVector.Dot(Vector3.Up)) > 0.999f)
-			? Vector3.Forward 
-			: Vector3.Up;
-
-		// Construct orthogonal basis
-		var rightVector = refUp.Cross(forwardVector);
-		var upVector = forwardVector.Cross(rightVector);
-
-		// Only build transform if cross product is valid (non-degenerate)
-		if (!refUp.Cross(forwardVector).IsZeroApprox())
-		{
-			var newBasis = new Basis(rightVector.Normalized(), upVector.Normalized(), forwardVector.Normalized());
-			var xForm = new Transform3D(newBasis.Orthonormalized(), Body3D.Position);
-
-			Body3D.GlobalTransform = Body3D.GlobalTransform.InterpolateWith(xForm, 10.0f * delta);
-		}
-
-		// Update LookVector based on movement (if that's your design)
-		LookVector = Body3D.Velocity.Normalized();
-
-	}
+        for (int c = 0; c < _body3D.GetSlideCollisionCount(); c++)
+        {
+            var collision = _body3D.GetSlideCollision(c);
+            
+            if (collision.GetCollider() is CollisionObject3D collider)
+            {
+                HandleCollision(
+                    collider,
+                    collision.GetPosition(),
+                    collision.GetNormal(),
+                    collision.GetColliderVelocity()
+                );
+            }
+        }
+    }
 }

@@ -30,7 +30,7 @@ public partial class Actor : Node3D
 	public delegate void OnMessageSentEventHandler(ActorMessage message);
 
 	
-	public Array<Node> Components { get; set; } = new Array<Node>();
+	public Array<ActorComponent> Components { get; set; } = new Array<ActorComponent>();
 	
 	public override void _Ready()
 	{
@@ -87,6 +87,11 @@ public partial class Actor : Node3D
 		}
 		else if(message is DamageMessage damageMessage){
 			EmitSignalOnDamage(damageMessage);
+		}
+
+		foreach (ActorComponent component in Components)
+		{
+			component.OnMessage(message);
 		}
 		
 	}

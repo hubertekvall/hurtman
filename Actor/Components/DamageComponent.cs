@@ -14,14 +14,14 @@ public partial class  DamageComponent : ActorComponent
 	public double Spread { get; set; }
 
 
-	protected override void OnMessage(ActorMessage message)
+	public override void OnMessage(ActorMessage message)
 	{
 
 		if (message is not ActorCollisionMessage collisionMessage) return;
 		
 		
 		
-		Actor.SendMessage(new DamageMessage(SpreadValue.GetRandomSpread(Damage, Spread)), collisionMessage.Other);
+		Actor.SendMessage(new DamageMessage(SpreadValue.GetRandomSpread(Damage, Spread)), collisionMessage.CollidingActor);
 	}
 
 }
