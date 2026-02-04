@@ -5,7 +5,7 @@ namespace Hurtman.Actor;
 public partial class Bounce : ActorComponent
 {
 	[Export]
-	public MovementComponent MovementComponent { get; set; }
+	public Components.MovementComponent MovementComponent { get; set; }
 	
 	
 	[Export]
@@ -16,7 +16,7 @@ public partial class Bounce : ActorComponent
 	
 		if (message is not CollisionMessage collisionMessage) return;
 			
-			MovementComponent.SetBodyVelocity(MovementComponent.PreviousVelocity.Bounce(collisionMessage.Normal) * BounceFactor);
+			MovementComponent.SetVelocity(MovementComponent.GetVelocity().Bounce(collisionMessage.Normal) * BounceFactor);
 	
 	}
 }

@@ -1,130 +1,126 @@
-using Godot;
+#nullable enable
 using System;
 using Godot.Collections;
-
+using System.Collections.Generic;
+using Godot;
 
 namespace Hurtman.Actor;
-[GlobalClass]
-[Tool]
-public partial class Actor : Node3D
+
+public abstract partial class Actor : Node, IActor
 {
+    public List<IActorComponent> Components { get; } = new List<IActorComponent>();
+    
+    public override void _Ready()
+    {
+        GatherComponents();
+        CallDeferred(MethodName.PostReady);
+    }
+    
+    public void GatherComponents()
+    {
+        foreach (Node component in GetChildren())
+        {
+            if (component is IActorComponent actorComponent)
+            {
+                Components.Add(actorComponent);
+            }
+        }
+    }
+
+    public abstract void PostReady();
+
+    public override void _Process(double delta)
+    {
+        if (Engine.IsEditorHint()) return;
+
+        foreach (var component in Components)
+        {
+            component.ProcessTick((float)delta);
+        }
+    }
 
 
-	
-	[Signal]
-	public delegate void OnCreationEventHandler();
-
-	[Signal]
-	public delegate void OnDeathEventHandler();
-	
-	[Signal]
-	public delegate void OnCollisionEventHandler(CollisionMessage message);
-	
-	[Signal]
-	public delegate void OnDamageEventHandler(DamageMessage message);
-	
-	[Signal]
-	public delegate void OnMessageEventHandler(ActorMessage message);
-	
-	[Signal]
-	public delegate void OnMessageSentEventHandler(ActorMessage message);
-
-	
-	public Array<ActorComponent> Components { get; set; } = new Array<ActorComponent>();
-	
-	public override void _Ready()
-	{
-		foreach (Node component in GetChildren())
-		{
-			if(component is ActorComponent actorComponent){
-				Components.Add(actorComponent);
-			}
-		}
-
-		
-		CallDeferred("_PostReady");
-		EmitSignalOnCreation();
-	}
-
-	public virtual void _PostReady() {}
-	
-
-	
-	public override void _Process(double delta)
-	{
-		if (Engine.IsEditorHint()) return;
-		
-		foreach (var component in Components)
-		{
-			if (component is ActorComponent actorComponent)
-			{
-				actorComponent.ProcessTick((float)delta);
-			}
-		}
-	}
-
-	public override void _PhysicsProcess(double delta)
-	{
-		if (Engine.IsEditorHint()) return;
-		
-		foreach (var component in Components)
-		{
-			if (component is ActorComponent actorComponent)
-			{
-				actorComponent.PhysicsTick((float)delta);
-			}
-		}
-		
-	}
-	
-	
-	public void ReceiveMessage(ActorMessage message)
-	{
-		EmitSignalOnMessage(message);
-		
-		if(message is CollisionMessage collisionMessage){
-			EmitSignalOnCollision(collisionMessage);
-		}
-		else if(message is DamageMessage damageMessage){
-			EmitSignalOnDamage(damageMessage);
-		}
-
-		foreach (ActorComponent component in Components)
-		{
-			component.OnMessage(message);
-		}
-		
-	}
+    public override void _PhysicsProcess(double delta)
+    {
+        if (Engine.IsEditorHint()) return;
+        foreach (var component in Components)
+        {
+            component.PhysicsTick((float)delta);
+        }
+    }
 
 
-	public void Kill(DeathCause cause)
-	{
-		if (IsQueuedForDeletion()) return;
-		EmitSignalOnDeath();
-		BroadCastMessage(new DeathMessage(cause));
-		
-		
-		QueueFree();
-	}
-	
-	
-	public void RegisterComponent(ActorComponent component)
-	{
-		Components.Add(component);
-	}
+    public void ReceiveMessage(ActorMessage message)
+    {
+        foreach (IActorComponent component in Components)
+        {
+            component.OnMessage(message);
+        }
+    }
 
+    public void Kill(DeathCause cause)
+    {
+        if (IsQueuedForDeletion()) return;
 
-	public void BroadCastMessage(ActorMessage message)
-	{
-		SendMessage(message, this);
-	}
+        BroadCastMessage(new DeathMessage(cause));
+        QueueFree();
+    }
 
+    public void RegisterComponent(IActorComponent component)
+    {
+        Components.Add(component);
+    }
 
+    public void BroadCastMessage(ActorMessage message)
+    {
+        SendMessage(message, this);
+    }
 
-	public void SendMessage(ActorMessage message, Actor recipient)
-	{
-		message.Sender = this;
-		EmitSignalOnMessageSent(message);
-		recipient.ReceiveMessage(message);
-	}
+    public void SendMessage(ActorMessage message, IActor recipient)
+    {
+        message.Sender = this;
+        recipient.ReceiveMessage(message);
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+[GlobalClass, Tool]
+public partial class RigidBodyMovementComponent : RigidBody3D, IActorComponent
+{
+    
+    public IActor? Actor { get; set; }
+    
+    public void PhysicsTick(float delta) {}
+
+    public void ProcessTick(float delta) {}
+
+    public void OnMessage(ActorMessage message) { }
+    
+}
+
+
+public static class NodeExtensions
+{
+    public static T AddNodeInEditor<T>(this Node node) where T : Node, new()
+    {
+       
+        
+        var addedNode = new T();
+        node.AddChild(addedNode);
+        addedNode.Owner = node.GetTree().EditedSceneRoot;
+
+        return addedNode;
+    }
+}
+
+

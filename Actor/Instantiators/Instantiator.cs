@@ -22,7 +22,7 @@ public  partial class Instantiator : Node3D
 	}
 
 
-	public Actor? Instantiate(Vector3 position, Basis basis)
+	public Actor Instantiate(Vector3 position, Basis basis)
 	{
 	
 		var actor = Instantiate();
@@ -35,13 +35,13 @@ public  partial class Instantiator : Node3D
 		return actor;
 	}
 	
-	public Actor? Instantiate()
+	public Actor Instantiate()
 	{
 		
 		if(ActorScene is null) return null;
 		
 		var instance = ActorScene.Instantiate();
-		if (instance is not Actor actor) throw new Exception("Scene root must be of the Actor class");
+		if (instance is not Actor actor) throw new Exception("Scene root must be of the IActor interface");
 		
 		foreach(var component in GetChildren().Duplicate()){
 			actor.AddChild(component);
