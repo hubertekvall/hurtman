@@ -13,6 +13,7 @@ public abstract partial class Actor : Node, IActor
     public override void _Ready()
     {
         GatherComponents();
+        SetupComponents();
         CallDeferred(MethodName.PostReady);
     }
     
@@ -26,6 +27,15 @@ public abstract partial class Actor : Node, IActor
             }
         }
     }
+
+    public void SetupComponents()
+    {
+        foreach (IActorComponent component in Components)
+        {
+            component.Setup(this);
+        }
+    }
+    
 
     public abstract void PostReady();
 
@@ -94,19 +104,6 @@ public abstract partial class Actor : Node, IActor
 
 
 
-[GlobalClass, Tool]
-public partial class RigidBodyMovementComponent : RigidBody3D, IActorComponent
-{
-    
-    public IActor? Actor { get; set; }
-    
-    public void PhysicsTick(float delta) {}
-
-    public void ProcessTick(float delta) {}
-
-    public void OnMessage(ActorMessage message) { }
-    
-}
 
 
 public static class NodeExtensions

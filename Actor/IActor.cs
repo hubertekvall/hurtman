@@ -14,4 +14,15 @@ public interface IActor
     public void RegisterComponent(IActorComponent component);
     public void BroadCastMessage(ActorMessage message);
     public void SendMessage(ActorMessage message, IActor recipient);
+    
+    T? GetComponent<T>() where T : class, IActorComponent
+    {
+        foreach (var component in Components)
+        {
+            if (component is T typedComponent)
+                return typedComponent;
+        }
+        return null;
+    }
+    
 }
