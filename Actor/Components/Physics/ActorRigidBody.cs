@@ -3,7 +3,7 @@ using Godot;
 namespace Hurtman.Actor.Components;
 
 [GlobalClass, Tool]
-public partial class ActorRigidBody : RigidBody3D, IActorComponent
+public partial class ActorRigidBody : RigidBody3D, IActorComponent, IPhysicsComponent
 {
     public override void _IntegrateForces(PhysicsDirectBodyState3D state)
     {
@@ -49,4 +49,8 @@ public partial class ActorRigidBody : RigidBody3D, IActorComponent
     public void OnMessage(ActorMessage message)
     {
     }
+
+    public Vector3 Velocity { get => this.LinearVelocity; set => this.LinearVelocity = value; }
+    public Vector3 Acceleration { get; set; }
+
 }

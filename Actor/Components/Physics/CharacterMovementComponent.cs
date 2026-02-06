@@ -5,14 +5,17 @@ namespace Hurtman.Actor.Components;
 
 
 [GlobalClass, Tool]
-public partial class ActorCharacterBody : CharacterBody3D, IActorComponent
+public partial class ActorCharacterBody : CharacterBody3D, IActorComponent, IPhysicsComponent
 {
 	public IActor Actor { get; set; }
-
+	public Vector3 Acceleration { get; set; }
+	
 	public void PhysicsTick(float delta)
 	{
 		if (Engine.IsEditorHint() || Actor == null) return;
 
+		MoveAndSlide();
+		
 		// Handle collisions from CharacterBody3D
 		for (int i = 0; i < GetSlideCollisionCount(); i++)
 		{
@@ -48,4 +51,5 @@ public partial class ActorCharacterBody : CharacterBody3D, IActorComponent
 
 	public void ProcessTick(float delta) { }
 	public void OnMessage(ActorMessage message) { }
+	
 }
