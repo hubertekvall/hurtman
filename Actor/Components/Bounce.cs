@@ -4,7 +4,7 @@ using Hurtman.Actor.Components;
 namespace Hurtman.Actor;
 
 [GlobalClass]
-public partial class Bounce : Node, IActorComponent
+public partial class Bounce : Node, IActorComponent, IMessageHandler
 {
 	
 	private IPhysicsComponent PhysicsComponent{ get; set; }
@@ -14,10 +14,7 @@ public partial class Bounce : Node, IActorComponent
 	public float BounceFactor = 1.0f;
 
 	public IActor Actor { get; set; }
-
-	public void PhysicsTick(float delta) { }
-
-	public void ProcessTick(float delta) { }
+	
 
 	public  void OnMessage(ActorMessage message)
 	{
@@ -25,6 +22,8 @@ public partial class Bounce : Node, IActorComponent
 		
 		PhysicsComponent.Velocity = PhysicsComponent.Velocity.Bounce(collisionMessage.Normal) * BounceFactor;
 	}
+
+
 
 	public void Setup()
 	{

@@ -9,14 +9,21 @@ namespace Hurtman.Actor.Components.Physics;
 public partial class ActorCharacterBody : CharacterBody3D, IActorComponent, IPhysicsComponent
 {
 	public IActor Actor { get; set; }
+	public Vector3 AngularVelocity { get; set; }
 	public float Damping { get; set; }
-
-	private Vector3 _velocityBuffer = Vector3.Zero;
-	
-	public void ApplyForce(Vector3 force)
+	public void ApplyForce(Vector3 force, Vector3? position = null)
 	{
 		_velocityBuffer += force;
 	}
+
+	public void ApplyTorque(Vector3 torque)
+	{
+		
+	}
+
+	private Vector3 _velocityBuffer = Vector3.Zero;
+	
+	
 
 	public void PhysicsTick(float delta)
 	{
@@ -67,5 +74,6 @@ public partial class ActorCharacterBody : CharacterBody3D, IActorComponent, IPhy
 
 	public void ProcessTick(float delta) { }
 	public void OnMessage(ActorMessage message) { }
+	public void OnInput(InputEvent inputEvent) { }
 	public void Setup() { }
 }

@@ -49,7 +49,10 @@ public  partial class Actor : Node, IActor
 
 		foreach (var component in Components.Values)
 		{
-			component.ProcessTick((float)delta);
+			if (component is IProcessHandler processHandler)
+			{
+				processHandler.ProcessTick((float)delta);
+			}
 		}
 	}
 
@@ -59,7 +62,11 @@ public  partial class Actor : Node, IActor
 		if (Engine.IsEditorHint()) return;
 		foreach (var component in Components.Values)
 		{
-			component.PhysicsTick((float)delta);
+			if (component is IPhysicsHandler physicsHandler)
+			{
+				physicsHandler.PhysicsTick((float)delta);
+			}
+			
 		}
 	}
 
@@ -68,7 +75,10 @@ public  partial class Actor : Node, IActor
 	{
 		foreach (var component in Components.Values)
 		{
-			component.OnMessage(message);
+			if (component is IMessageHandler messageHandler)
+			{
+				messageHandler.OnMessage(message);
+			}
 		}
 	}
 

@@ -26,6 +26,10 @@ public partial class StateMachine : Node, IActorComponent
 	public void ProcessTick(float delta) { }
 
 	public void OnMessage(ActorMessage message) { }
+	public void OnInput(InputEvent inputEvent)
+	{
+	
+	}
 
 	public void Setup() { }
 

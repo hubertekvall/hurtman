@@ -6,7 +6,6 @@
     <mapping directory="$PROJECT_DIR$/../bouncybounce" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../bumpercars" vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/phantom-camera" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../ilion" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../kielbasa-town" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../mordindale" vcs="Git" />

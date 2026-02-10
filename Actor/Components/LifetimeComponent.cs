@@ -11,22 +11,8 @@ public partial class LifetimeComponent : Node, IActorComponent
 
 
     public IActor Actor { get; set; }
-    public void PhysicsTick(float delta)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void ProcessTick(float delta)
-    {
-        
-    }
-
-    public void OnMessage(ActorMessage message)
-    {
-      
-    }
-
  
+
 
     public  void Setup()
     {

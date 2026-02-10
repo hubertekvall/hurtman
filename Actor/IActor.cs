@@ -24,4 +24,9 @@ public interface IActor
         return Components.Values.OfType<T>().FirstOrDefault();
     }
     
+    
+    IEnumerable<T>? GetAllComponent<T>()  where T : class
+    {
+        return Components.Values.OfType<T>();
+    }
 }

@@ -3,12 +3,14 @@ using Godot;
 namespace Hurtman.Actor;
 [GlobalClass]
 [Tool]
-public partial class HealthComponent : Node, IActorComponent
+public partial class HealthComponent : Node, IActorComponent, IMessageHandler
 {
 	[Export]
 	public double MaxHealth { get; set; }
 
 	public double CurrentHealth { get; set; }
+
+
 
 
 	public void Setup()
@@ -18,15 +20,6 @@ public partial class HealthComponent : Node, IActorComponent
 
 	public IActor Actor { get; set; }
 
-	public void PhysicsTick(float delta)
-	{
-		throw new System.NotImplementedException();
-	}
-
-	public void ProcessTick(float delta)
-	{
-		throw new System.NotImplementedException();
-	}
 
 	public  void OnMessage(ActorMessage message)
 	{

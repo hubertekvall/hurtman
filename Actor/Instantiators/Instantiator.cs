@@ -63,6 +63,11 @@ public partial class Instantiator3D : Node3D, IActorComponent
 	{
 	}
 
+	public void OnInput(InputEvent inputEvent)
+	{
+
+	}
+
 	public void Setup()
 	{
 	}

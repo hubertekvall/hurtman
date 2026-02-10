@@ -4,7 +4,7 @@ namespace Hurtman.Actor;
 
 
 [GlobalClass]
-public partial class  DamageComponent : Node, IActorComponent
+public partial class  DamageComponent : Node, IActorComponent, IMessageHandler
 {
 	[Export] 
 	public double Damage { get; set; }
@@ -15,16 +15,7 @@ public partial class  DamageComponent : Node, IActorComponent
 
 
 	public IActor Actor { get; set; }
-
-	public void PhysicsTick(float delta)
-	{
-		
-	}
-
-	public void ProcessTick(float delta)
-	{
-		
-	}
+	
 
 	public  void OnMessage(ActorMessage message)
 	{
@@ -32,6 +23,7 @@ public partial class  DamageComponent : Node, IActorComponent
 		if (message is not ActorCollisionMessage collisionMessage) return;
 		Actor.SendMessage(new DamageMessage(SpreadValue.GetRandomSpread(Damage, Spread)), collisionMessage.OtherActor);
 	}
+	
 
 	public void Setup()
 	{

@@ -1,8 +1,10 @@
 [gd_scene format=3 uid="uid://rgomliwjjr6u"]
 
-[ext_resource type="Script" uid="uid://bwlga26j7x66" path="res://Actor/Components/Physics/PhysicalCharacterController.cs" id="1_33li0"]
 [ext_resource type="Script" uid="uid://bj5uyuya0qv80" path="res://Actor/Actor.cs" id="1_ntgmx"]
 [ext_resource type="Script" uid="uid://bb4oa64iaiqye" path="res://Actor/Components/Physics/ActorRigidBody.cs" id="2_ntgmx"]
+[ext_resource type="Script" uid="uid://debor77bhrxik" path="res://Actor/Components/Physics/PhysicalCharacter.cs" id="3_j4b8o"]
+[ext_resource type="Script" uid="uid://clhagtjl5mkjm" path="res://Actor/Components/Physics/CameraMatchingController.cs" id="4_j4b8o"]
+[ext_resource type="Script" uid="uid://q6j75mmlwwig" path="res://Actor/Components/Physics/SpringCharacter.cs" id="5_6lhup"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_33li0"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -13,24 +15,32 @@ sky_material = SubResource("ProceduralSkyMaterial_33li0")
 
 [sub_resource type="Environment" id="Environment_j4b8o"]
 background_mode = 2
+background_energy_multiplier = 1.4
 sky = SubResource("Sky_ntgmx")
-tonemap_mode = 2
-glow_enabled = true
+tonemap_mode = 4
+tonemap_exposure = 2.24
+tonemap_agx_white = 5.84
+ssao_enabled = true
+ssil_enabled = true
 
 [sub_resource type="BoxMesh" id="BoxMesh_j4b8o"]
 size = Vector3(16, 1, 16)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_6lhup"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_j4b8o"]
 size = Vector3(16, 1, 16)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_33li0"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ntgmx"]
 
-[sub_resource type="Curve" id="Curve_ntgmx"]
+[sub_resource type="Curve" id="Curve_j4b8o"]
 _limits = [1.0, 2.0, 0.0, 1.0]
-_data = [Vector2(0, 2), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 2
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.29500002, 2), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="BoxMesh" id="BoxMesh_6lhup"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_daqqq"]
 
 [node name="Node3D" type="Node3D" unique_id=752612385]
 
@@ -42,20 +52,21 @@ shadow_enabled = true
 environment = SubResource("Environment_j4b8o")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1820626061]
+transform = Transform3D(10.75, 0, 0, 0, 1, 0, 0, 0, 10.75, 0, 0, 0)
 mesh = SubResource("BoxMesh_j4b8o")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D" unique_id=1567481455]
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D" unique_id=583343998]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D" unique_id=1489446397]
-shape = SubResource("BoxShape3D_6lhup")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D" unique_id=745452944]
+shape = SubResource("BoxShape3D_j4b8o")
 
 [node name="Actor" type="Node" parent="." unique_id=1537122226]
 script = ExtResource("1_ntgmx")
 metadata/_custom_type_script = "uid://bj5uyuya0qv80"
 
 [node name="ActorRigidBody" type="RigidBody3D" parent="Actor" unique_id=307262649]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5550401, 0)
-gravity_scale = 0.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.7541847, 0)
+max_contacts_reported = 4
 script = ExtResource("2_ntgmx")
 metadata/_custom_type_script = "uid://bb4oa64iaiqye"
 
@@ -66,9 +77,36 @@ mesh = SubResource("CapsuleMesh_33li0")
 shape = SubResource("CapsuleShape3D_ntgmx")
 
 [node name="PhysicalCharacterController" type="Node" parent="Actor" unique_id=2109179449]
-script = ExtResource("1_33li0")
+script = ExtResource("3_j4b8o")
 MaxSpeed = 10.0
-Acceleration = 9.0
-MaxAccelerationForce = 10.0
-AccelerationCurve = SubResource("Curve_ntgmx")
-metadata/_custom_type_script = "uid://bwlga26j7x66"
+Acceleration = 200.0
+MaxAccelerationForce = 50.0
+AccelerationCurve = SubResource("Curve_j4b8o")
+
+[node name="CameraMatchingController" type="Node" parent="Actor" unique_id=620540443]
+script = ExtResource("4_j4b8o")
+metadata/_custom_type_script = "uid://clhagtjl5mkjm"
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=519166994]
+transform = Transform3D(0.8580838, -0.3293761, 0.3939589, 0, 0.7671888, 0.6414214, -0.5135097, -0.5503933, 0.65831226, 7.3460207, 11.960372, 12.2753315)
+
+[node name="Actor2" type="Node" parent="." unique_id=1830411923]
+script = ExtResource("1_ntgmx")
+metadata/_custom_type_script = "uid://bj5uyuya0qv80"
+
+[node name="ActorRigidBody" type="RigidBody3D" parent="Actor2" unique_id=355948973]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5231164, -0.051134348)
+script = ExtResource("2_ntgmx")
+metadata/_custom_type_script = "uid://bb4oa64iaiqye"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Actor2/ActorRigidBody" unique_id=762427008]
+mesh = SubResource("BoxMesh_6lhup")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Actor2/ActorRigidBody" unique_id=1157091850]
+shape = SubResource("BoxShape3D_daqqq")
+
+[node name="SpringCharacter" type="Node" parent="Actor2" unique_id=914745602]
+script = ExtResource("5_6lhup")
+RideHeight = 4.0
+RideSpringStrength = 10.0
+metadata/_custom_type_script = "uid://q6j75mmlwwig"
