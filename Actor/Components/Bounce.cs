@@ -1,11 +1,13 @@
 using Godot;
+using Hurtman.Actor.Components;
+
 namespace Hurtman.Actor;
 
 [GlobalClass]
-public partial class Bounce : IActorComponent
+public partial class Bounce : Node, IActorComponent
 {
-	[Export]
-	public Components.MovementComponent MovementComponent { get; set; }
+	
+	private IPhysicsComponent PhysicsComponent{ get; set; }
 	
 	
 	[Export]
@@ -20,7 +22,12 @@ public partial class Bounce : IActorComponent
 	public  void OnMessage(ActorMessage message)
 	{
 		if (message is not CollisionMessage collisionMessage) return;
-			MovementComponent.SetVelocity(MovementComponent.GetVelocity().Bounce(collisionMessage.Normal) * BounceFactor);
-	
+		
+		PhysicsComponent.Velocity = PhysicsComponent.Velocity.Bounce(collisionMessage.Normal) * BounceFactor;
+	}
+
+	public void Setup()
+	{
+		PhysicsComponent = Actor.GetComponent<IPhysicsComponent>();
 	}
 }

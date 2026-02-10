@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://rgomliwjjr6u"]
 
-[ext_resource type="Script" uid="uid://0moebjl2xdjp" path="res://Actor/CharacterActor.cs" id="1_f36ky"]
+[ext_resource type="Script" uid="uid://bwlga26j7x66" path="res://Actor/Components/Physics/PhysicalCharacterController.cs" id="1_33li0"]
+[ext_resource type="Script" uid="uid://bj5uyuya0qv80" path="res://Actor/Actor.cs" id="1_ntgmx"]
+[ext_resource type="Script" uid="uid://bb4oa64iaiqye" path="res://Actor/Components/Physics/ActorRigidBody.cs" id="2_ntgmx"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_33li0"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -21,6 +23,15 @@ size = Vector3(16, 1, 16)
 [sub_resource type="BoxShape3D" id="BoxShape3D_6lhup"]
 size = Vector3(16, 1, 16)
 
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_33li0"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ntgmx"]
+
+[sub_resource type="Curve" id="Curve_ntgmx"]
+_limits = [1.0, 2.0, 0.0, 1.0]
+_data = [Vector2(0, 2), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
 [node name="Node3D" type="Node3D" unique_id=752612385]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=47148255]
@@ -38,9 +49,26 @@ mesh = SubResource("BoxMesh_j4b8o")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D" unique_id=1489446397]
 shape = SubResource("BoxShape3D_6lhup")
 
-[node name="CharacterActor" type="Node3D" parent="." unique_id=512981831]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0376883, 0)
-script = ExtResource("1_f36ky")
-metadata/_custom_type_script = "uid://0moebjl2xdjp"
+[node name="Actor" type="Node" parent="." unique_id=1537122226]
+script = ExtResource("1_ntgmx")
+metadata/_custom_type_script = "uid://bj5uyuya0qv80"
 
-[node name="CharacterBody3D" type="CharacterBody3D" parent="CharacterActor" unique_id=1742946585]
+[node name="ActorRigidBody" type="RigidBody3D" parent="Actor" unique_id=307262649]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5550401, 0)
+gravity_scale = 0.0
+script = ExtResource("2_ntgmx")
+metadata/_custom_type_script = "uid://bb4oa64iaiqye"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Actor/ActorRigidBody" unique_id=1556521493]
+mesh = SubResource("CapsuleMesh_33li0")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Actor/ActorRigidBody" unique_id=1022297658]
+shape = SubResource("CapsuleShape3D_ntgmx")
+
+[node name="PhysicalCharacterController" type="Node" parent="Actor" unique_id=2109179449]
+script = ExtResource("1_33li0")
+MaxSpeed = 10.0
+Acceleration = 9.0
+MaxAccelerationForce = 10.0
+AccelerationCurve = SubResource("Curve_ntgmx")
+metadata/_custom_type_script = "uid://bwlga26j7x66"

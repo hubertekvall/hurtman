@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/../../Code/vcpkg" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../Pillarproject" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../bouncybounce" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../bumpercars" vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/phantom-camera" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../ilion" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../kielbasa-town" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../mordindale" vcs="Git" />
   </component>
 </project>

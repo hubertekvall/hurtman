@@ -3,57 +3,32 @@ using Godot;
 using Hurtman.Actor;
 namespace Hurtman.StateMachine;
 
-public partial class State(Godot.Collections.Dictionary<String, Variant> blackboard) : Node
-{
-	private Godot.Collections.Dictionary<String, Variant> Blackboard { get; set; } = blackboard;
-
-
-
-	public virtual void Enter() { }
-	public virtual void Run(float delta) { }
-	public virtual void Exit() { }
-
-	/// <summary>
-	/// Whether this state allows the state machine to transition away from it to a specific target state.
-	/// Returning false blocks the transition unless it's forced.
-	/// </summary>
-	public virtual bool CanTransition(State targetState) => true;
-
-	/// <summary>
-	/// Requests the state machine to transition to a new state.
-	/// Respects CanTransition() checks.
-	/// </summary>
-	private void RequestTransition(State nextState)
-	{
-		StateMachine?.Transition(nextState);
-	}
-
-	/// <summary>
-	/// Requests a forced transition, ignoring CanTransition().
-	/// </summary>
-	private void RequestForceTransition(State nextState)
-	{
-		StateMachine?.Transition(nextState, force: true);
-	}
-
-	internal StateMachine? StateMachine { get; set; }
-}
-
-public partial class StateMachine : ActorComponent
+[GlobalClass]
+public partial class StateMachine : Node, IActorComponent
 {
 	private State? CurrentState { get; set; }
 	private State? PreviousState { get; set; }
 
 	
-	[Signal] public delegate void StateExitEventHandler(State state);
-	[Signal] public delegate void StateEnterEventHandler(State state);
+	[Signal] 
+	public delegate void StateExitEventHandler(State state);
 	
-	public override void PhysicsTick(float delta)
+	[Signal] 
+	public delegate void StateEnterEventHandler(State state);
+
+	public IActor Actor { get; set; }
+
+	public  void PhysicsTick(float delta)
 	{
 		CurrentState?.Run(delta);
 	}
 
- 
+	public void ProcessTick(float delta) { }
+
+	public void OnMessage(ActorMessage message) { }
+
+	public void Setup() { }
+
 
 	/// <summary>
 	/// Transitions to a new state.

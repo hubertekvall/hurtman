@@ -6,8 +6,6 @@ public interface IActorComponent
     public void PhysicsTick(float delta);
     public void ProcessTick(float delta);
     public void OnMessage(ActorMessage message);
-    public void Setup(IActor actor)
-    {
-        this.Actor = actor;
-    }
+    public void Setup();
+
 }

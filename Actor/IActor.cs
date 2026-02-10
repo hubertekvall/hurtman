@@ -1,12 +1,15 @@
 #nullable enable
+using System;
 using Godot;
 using System.Collections.Generic;
+using Hurtman.Actor.Components;
+using System.Linq;
 
 namespace Hurtman.Actor;
 
 public interface IActor
 {
-    List<IActorComponent> Components { get; }
+    Dictionary<Type, IActorComponent> Components { get; }
 
     public void GatherComponents();
     public void PostReady();
@@ -16,14 +19,9 @@ public interface IActor
     public void BroadCastMessage(ActorMessage message);
     public void SendMessage(ActorMessage message, IActor recipient);
     
-    T? GetComponent<T>() where T : class, IActorComponent
+    T? GetComponent<T>()  where T : class
     {
-        foreach (var component in Components)
-        {
-            if (component is T typedComponent)
-                return typedComponent;
-        }
-        return null;
+        return Components.Values.OfType<T>().FirstOrDefault();
     }
     
 }

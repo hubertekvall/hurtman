@@ -4,7 +4,7 @@ using Godot.Collections;
 namespace Hurtman.Actor;
 
 [GlobalClass]
-public  partial class Instantiator : Node3D
+public partial class Instantiator3D : Node3D, IActorComponent
 {
 	[Export]
 	public PackedScene ActorScene { get; set; }
@@ -12,26 +12,15 @@ public  partial class Instantiator : Node3D
 	[Export]
 	public bool Local  { get; set; }
 
-	public void InstantiateWithMessage(ActorMessage message)
-	{
-		if(message is CollisionMessage collisionMessage)
-		{
-			Instantiate(collisionMessage.CollisionPosition, collisionMessage.Sender.Basis);
-		}
 
-	}
+
 
 
 	public Actor Instantiate(Vector3 position, Basis basis)
 	{
-	
 		var actor = Instantiate();
-	
-
-		actor.Position = position;
-		actor.Basis = basis;
-
-		
+		Position = position;
+		Basis = basis;
 		return actor;
 	}
 	
@@ -43,7 +32,8 @@ public  partial class Instantiator : Node3D
 		var instance = ActorScene.Instantiate();
 		if (instance is not Actor actor) throw new Exception("Scene root must be of the IActor interface");
 		
-		foreach(var component in GetChildren().Duplicate()){
+		foreach(var component in GetChildren().Duplicate())
+		{
 			actor.AddChild(component);
 		}
 		
@@ -59,7 +49,21 @@ public  partial class Instantiator : Node3D
 		return actor;
 	}
 
-	
-	
 
+	public IActor Actor { get; set; }
+	public void PhysicsTick(float delta)
+	{
+	}
+
+	public void ProcessTick(float delta)
+	{
+	}
+
+	public void OnMessage(ActorMessage message)
+	{
+	}
+
+	public void Setup()
+	{
+	}
 }
