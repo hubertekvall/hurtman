@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://debor77bhrxik" path="res://Actor/Components/Physics/PhysicalCharacter.cs" id="3_j4b8o"]
 [ext_resource type="Script" uid="uid://clhagtjl5mkjm" path="res://Actor/Components/Physics/CameraMatchingController.cs" id="4_j4b8o"]
 [ext_resource type="Script" uid="uid://q6j75mmlwwig" path="res://Actor/Components/Physics/SpringCharacter.cs" id="5_6lhup"]
+[ext_resource type="Script" uid="uid://d16kod87wlvff" path="res://Actor/Components/Physics/UprightTorque.cs" id="6_daqqq"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_33li0"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -87,6 +88,14 @@ AccelerationCurve = SubResource("Curve_j4b8o")
 script = ExtResource("4_j4b8o")
 metadata/_custom_type_script = "uid://clhagtjl5mkjm"
 
+[node name="SpringCharacter" type="Node" parent="Actor" unique_id=440590014]
+script = ExtResource("5_6lhup")
+metadata/_custom_type_script = "uid://q6j75mmlwwig"
+
+[node name="UprightTorque" type="Node" parent="Actor" unique_id=1589554692]
+script = ExtResource("6_daqqq")
+metadata/_custom_type_script = "uid://d16kod87wlvff"
+
 [node name="Camera3D" type="Camera3D" parent="." unique_id=519166994]
 transform = Transform3D(0.8580838, -0.3293761, 0.3939589, 0, 0.7671888, 0.6414214, -0.5135097, -0.5503933, 0.65831226, 7.3460207, 11.960372, 12.2753315)
 
@@ -110,3 +119,7 @@ script = ExtResource("5_6lhup")
 RideHeight = 4.0
 RideSpringStrength = 10.0
 metadata/_custom_type_script = "uid://q6j75mmlwwig"
+
+[node name="UprightTorque" type="Node" parent="Actor2" unique_id=996469374]
+script = ExtResource("6_daqqq")
+metadata/_custom_type_script = "uid://d16kod87wlvff"
