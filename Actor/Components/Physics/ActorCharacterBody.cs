@@ -73,7 +73,13 @@ public partial class ActorCharacterBody : CharacterBody3D, IActorComponent, IPhy
 	
 
 	public void ProcessTick(float delta) { }
-	public void OnMessage(ActorMessage message) { }
+
+	public void OnMessage(ActorMessage message)
+	{
+		if (message is not TeleportMessage3D teleportMessage) return;
+		
+		GlobalPosition = teleportMessage.Position;
+	}
 	public void OnInput(InputEvent inputEvent) { }
 	public void Setup() { }
 }

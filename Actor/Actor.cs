@@ -20,14 +20,16 @@ public  partial class Actor : Node, IActor
 	
 	public void GatherComponents()
 	{
-		foreach (Node component in GetChildren())
+		var _components = FindChildren("*");
+		
+		foreach (Node component in _components)
 		{
 			if (component is IActorComponent actorComponent)
 			{
 				Components.Add(actorComponent.GetType(), actorComponent);
 			}
-			GD.Print("Gathering Components");
 		}
+		
 	}
 
 	public void SetupComponents()
@@ -36,7 +38,6 @@ public  partial class Actor : Node, IActor
 		{
 			component.Actor = this;
 			component.Setup();
-			GD.Print("Setup Components");
 		}
 	}
 	
@@ -72,7 +73,8 @@ public  partial class Actor : Node, IActor
 
 
 	public void ReceiveMessage(ActorMessage message)
-	{
+	{	
+		
 		foreach (var component in Components.Values)
 		{
 			if (component is IMessageHandler messageHandler)

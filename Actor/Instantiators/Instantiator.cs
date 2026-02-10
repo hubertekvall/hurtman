@@ -1,10 +1,10 @@
 using System;
 using Godot;
-using Godot.Collections;
-namespace Hurtman.Actor;
 
-[GlobalClass]
-public partial class Instantiator3D : Node3D, IActorComponent
+namespace Hurtman.Actor.Instantiators;
+
+
+public partial class Instantiator : Node3D, IActorComponent
 {
 	[Export]
 	public PackedScene ActorScene { get; set; }
@@ -12,21 +12,26 @@ public partial class Instantiator3D : Node3D, IActorComponent
 	[Export]
 	public bool Local  { get; set; }
 
+	[Export]
+	public Node3D Holder { get; set; }
 
 
+	[Export] public float RateLimit { get; set; } = 0.5f;
 
+	private bool canInstantiate = true;
 
+	
+	
 	public Actor Instantiate(Vector3 position, Basis basis)
 	{
 		var actor = Instantiate();
-		Position = position;
-		Basis = basis;
+		Actor.SendMessage(new TeleportMessage3D(position), actor);
 		return actor;
 	}
 	
 	public Actor Instantiate()
 	{
-		
+		if (!canInstantiate) return null;
 		if(ActorScene is null) return null;
 		
 		var instance = ActorScene.Instantiate();
@@ -39,36 +44,32 @@ public partial class Instantiator3D : Node3D, IActorComponent
 		
 		if (Local)
 		{
-			AddChild(actor);
+			Holder.AddChild(actor);
 		}
 		else
 		{
 			GetViewport().AddChild(actor);
 		}
+
+		canInstantiate = false;
+		GetTree().CreateTimer(RateLimit).Timeout += ToggleInstantiator;
 		
 		return actor;
 	}
 
 
 	public IActor Actor { get; set; }
-	public void PhysicsTick(float delta)
-	{
-	}
 
-	public void ProcessTick(float delta)
-	{
-	}
 
-	public void OnMessage(ActorMessage message)
-	{
-	}
 
-	public void OnInput(InputEvent inputEvent)
+	private void ToggleInstantiator()
 	{
-
+		canInstantiate = !canInstantiate;
 	}
+	
 
 	public void Setup()
 	{
+		Holder ??= this;
 	}
 }

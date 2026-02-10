@@ -86,7 +86,6 @@ public partial class SpringCharacter : Node, IActorComponent, IMovement3D
 	public void Setup()
 	{
 		PhysicsComponent = Actor.GetComponent<IPhysicsComponent>();
-	
 	}
 
 

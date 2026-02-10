@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://cs2me0viaudeq"]
+
+[ext_resource type="Script" uid="uid://bj5uyuya0qv80" path="res://Actor/Actor.cs" id="1_g101m"]
+[ext_resource type="Script" uid="uid://bn3fvtsnwxosc" path="res://Actor/Components/Physics/ActorNode3D.cs" id="2_s3p8l"]
+[ext_resource type="Script" uid="uid://cmwpfjqbh7t8q" path="res://Actor/Components/Effects/OneShotParticles3D.cs" id="2_ujul6"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ujul6"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_s3p8l"]
+
+[sub_resource type="Curve" id="Curve_okpnm"]
+_data = [Vector2(0.011173189, 0), 0.0, 0.0, 0, 0, Vector2(0.05586592, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[node name="ExplosionEffect" type="Node" unique_id=1857406564]
+script = ExtResource("1_g101m")
+
+[node name="ActorNode3D" type="Node3D" parent="." unique_id=1139113194]
+script = ExtResource("2_s3p8l")
+metadata/_custom_type_script = "uid://bn3fvtsnwxosc"
+
+[node name="CPUParticles3D" type="CPUParticles3D" parent="ActorNode3D" unique_id=948728048 node_paths=PackedStringArray("Actor")]
+material_override = SubResource("StandardMaterial3D_ujul6")
+emitting = false
+lifetime = 0.5
+one_shot = true
+explosiveness = 0.8
+mesh = SubResource("SphereMesh_s3p8l")
+spread = 180.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 21.5
+initial_velocity_max = 21.5
+damping_min = 100.0
+damping_max = 100.0
+scale_amount_max = 3.16
+scale_amount_curve = SubResource("Curve_okpnm")
+script = ExtResource("2_ujul6")
+Actor = NodePath("../..")
+
+[connection signal="finished" from="ActorNode3D/CPUParticles3D" to="." method="Kill" binds= [0]]
