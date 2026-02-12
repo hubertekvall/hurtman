@@ -1,6 +1,6 @@
 using System;
 using Godot;
-using Hurtman.Actor;
+using Hurtman.Actors;
 namespace Hurtman.StateMachine;
 
 [GlobalClass]
@@ -16,7 +16,7 @@ public partial class StateMachine : Node, IActorComponent
 	[Signal] 
 	public delegate void StateEnterEventHandler(State state);
 
-	public IActor Actor { get; set; }
+	public Actors.Actor Actor { get; set; }
 
 	public  void PhysicsTick(float delta)
 	{

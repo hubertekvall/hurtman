@@ -19,7 +19,7 @@ script = ExtResource("1_g101m")
 script = ExtResource("2_s3p8l")
 metadata/_custom_type_script = "uid://bn3fvtsnwxosc"
 
-[node name="CPUParticles3D" type="CPUParticles3D" parent="ActorNode3D" unique_id=948728048 node_paths=PackedStringArray("Actor")]
+[node name="CPUParticles3D" type="CPUParticles3D" parent="ActorNode3D" unique_id=948728048]
 material_override = SubResource("StandardMaterial3D_ujul6")
 emitting = false
 lifetime = 0.5
@@ -32,9 +32,9 @@ initial_velocity_min = 21.5
 initial_velocity_max = 21.5
 damping_min = 100.0
 damping_max = 100.0
-scale_amount_max = 3.16
+scale_amount_min = 0.59
+scale_amount_max = 1.64
 scale_amount_curve = SubResource("Curve_okpnm")
 script = ExtResource("2_ujul6")
-Actor = NodePath("../..")
 
 [connection signal="finished" from="ActorNode3D/CPUParticles3D" to="." method="Kill" binds= [0]]
