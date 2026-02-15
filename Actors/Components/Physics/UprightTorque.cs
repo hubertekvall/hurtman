@@ -15,13 +15,13 @@ public partial class UprightTorque : Node, IActorComponent, IMovement3D
 	public Actor Actor { get; set; }
 	public void Setup()
 	{
-		PhysicsComponent = Actor.GetComponent<IPhysicsComponent>();
+		PhysicsComponent3D = Actor.GetComponent<IPhysicsComponent3D>();
 	}
 
 	public void PhysicsTick(float delta)
 	{
 		// Get the current up direction of the rigidbody
-		var currentUp = PhysicsComponent.GlobalTransform.Basis.Y;
+		var currentUp = PhysicsComponent3D.GlobalTransform.Basis.Y;
 
 		// Desired up direction (world up)
 		var desiredUp = Vector3.Up;
@@ -47,9 +47,9 @@ public partial class UprightTorque : Node, IActorComponent, IMovement3D
 		var torque = rotationAxis * angle * TorqueStrength;
 
 		// Apply damping based on current angular velocity
-		var damping = -PhysicsComponent.AngularVelocity * TorqueDamping;
+		var damping = -PhysicsComponent3D.AngularVelocity * TorqueDamping;
 
-		PhysicsComponent.ApplyTorque(torque + damping);
+		PhysicsComponent3D.ApplyTorque(torque + damping);
 	}
 
 	public void ProcessTick(float delta)
@@ -60,5 +60,5 @@ public partial class UprightTorque : Node, IActorComponent, IMovement3D
 	{
 	}
 
-	public IPhysicsComponent PhysicsComponent { get; set; }
+	public IPhysicsComponent3D PhysicsComponent3D { get; set; }
 }

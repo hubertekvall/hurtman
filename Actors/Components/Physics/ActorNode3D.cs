@@ -8,8 +8,10 @@ namespace Hurtman.Actors.Components.Physics;
 public partial class ActorNode3D : Node3D, IActorComponent, IMessageHandler 
 {
 	public Actor Actor { get; set; }
+
 	public void Setup()
 	{
+		
 	}
 
 	public void OnMessage(ActorMessage message)
@@ -17,9 +19,7 @@ public partial class ActorNode3D : Node3D, IActorComponent, IMessageHandler
 		
 		if (message is TeleportMessage3D teleportMessage)
 		{
-			
-			
-			GlobalPosition = teleportMessage.Position;
+			Position = teleportMessage.Position;
 		}
 	}
 

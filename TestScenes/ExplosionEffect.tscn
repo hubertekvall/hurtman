@@ -1,8 +1,9 @@
 [gd_scene format=3 uid="uid://cs2me0viaudeq"]
 
-[ext_resource type="Script" uid="uid://bj5uyuya0qv80" path="res://Actor/Actor.cs" id="1_g101m"]
-[ext_resource type="Script" uid="uid://bn3fvtsnwxosc" path="res://Actor/Components/Physics/ActorNode3D.cs" id="2_s3p8l"]
-[ext_resource type="Script" uid="uid://cmwpfjqbh7t8q" path="res://Actor/Components/Effects/OneShotParticles3D.cs" id="2_ujul6"]
+[ext_resource type="Script" uid="uid://bj5uyuya0qv80" path="res://Actors/Actor.cs" id="1_g101m"]
+[ext_resource type="Script" uid="uid://bn3fvtsnwxosc" path="res://Actors/Components/Physics/ActorNode3D.cs" id="2_s3p8l"]
+[ext_resource type="Script" uid="uid://cmwpfjqbh7t8q" path="res://Actors/Components/Effects/OneShotParticles3D.cs" id="2_ujul6"]
+[ext_resource type="Script" uid="uid://cnfspeijksygk" path="res://Actors/Components/Physics/AttractorsRepulsors/RepulsorSphere.cs" id="4_okpnm"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ujul6"]
 
@@ -11,6 +12,8 @@
 [sub_resource type="Curve" id="Curve_okpnm"]
 _data = [Vector2(0.011173189, 0), 0.0, 0.0, 0, 0, Vector2(0.05586592, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 3
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ec7wj"]
 
 [node name="ExplosionEffect" type="Node" unique_id=1857406564]
 script = ExtResource("1_g101m")
@@ -36,5 +39,13 @@ scale_amount_min = 0.59
 scale_amount_max = 1.64
 scale_amount_curve = SubResource("Curve_okpnm")
 script = ExtResource("2_ujul6")
+
+[node name="RepulsorSphere" type="ShapeCast3D" parent="ActorNode3D" unique_id=1380508906]
+shape = SubResource("SphereShape3D_ec7wj")
+target_position = Vector3(0, 0, 0)
+script = ExtResource("4_okpnm")
+Force = 100.0
+DepthMultiplier = 1.0
+metadata/_custom_type_script = "uid://cnfspeijksygk"
 
 [connection signal="finished" from="ActorNode3D/CPUParticles3D" to="." method="Kill" binds= [0]]

@@ -7,7 +7,7 @@ namespace Hurtman.Actors;
 public partial class Bounce : Node, IActorComponent, IMessageHandler
 {
 	
-	private IPhysicsComponent PhysicsComponent{ get; set; }
+	private IPhysicsComponent3D PhysicsComponent3D{ get; set; }
 	
 	
 	[Export]
@@ -20,13 +20,13 @@ public partial class Bounce : Node, IActorComponent, IMessageHandler
 	{
 		if (message is not CollisionMessage collisionMessage) return;
 		
-		PhysicsComponent.Velocity = PhysicsComponent.Velocity.Bounce(collisionMessage.Normal) * BounceFactor;
+		PhysicsComponent3D.Velocity = PhysicsComponent3D.Velocity.Bounce(collisionMessage.Normal) * BounceFactor;
 	}
 
 
 
 	public void Setup()
 	{
-		PhysicsComponent = Actor.GetComponent<IPhysicsComponent>();
+		PhysicsComponent3D = Actor.GetComponent<IPhysicsComponent3D>();
 	}
 }

@@ -58,8 +58,10 @@ point_count = 2
 diffuse_mode = 1
 
 [sub_resource type="BoxMesh" id="BoxMesh_6lhup"]
+size = Vector3(4, 4, 4)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_daqqq"]
+size = Vector3(4, 4, 4)
 
 [sub_resource type="Resource" id="Resource_l7v2s"]
 script = ExtResource("9_i7i2i")
@@ -95,9 +97,8 @@ metadata/_custom_type_script = "uid://bj5uyuya0qv80"
 
 [node name="Instantiator3D" type="Node" parent="Actor" unique_id=235186802]
 script = ExtResource("2_ikd3r")
-VelocityTreshold = 2.0
+VelocityTreshold = 0.0
 ActorScene = ExtResource("4_d8xex")
-Pooled = true
 PoolName = "dustcloud"
 
 [node name="ActorRigidBody" type="RigidBody3D" parent="Actor" unique_id=307262649]
@@ -138,7 +139,7 @@ script = ExtResource("2_d8xex")
 metadata/_custom_type_script = "uid://bj5uyuya0qv80"
 
 [node name="ActorRigidBody" type="RigidBody3D" parent="Actor2" unique_id=355948973]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5231164, -0.051134348)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1242697, -0.051134348)
 linear_damp = 0.2
 script = ExtResource("4_l7v2s")
 metadata/_custom_type_script = "uid://bb4oa64iaiqye"

@@ -16,7 +16,7 @@ public partial class PhysicalCharacter : Node, IActorComponent, IMovement3D
 
 	
 	public Vector3 MoveDirection { get; set; }
-	public IPhysicsComponent PhysicsComponent { get; set; }
+	public IPhysicsComponent3D PhysicsComponent3D { get; set; }
 	public Actor Actor { get; set; }
 
 	public void PhysicsTick(float delta)
@@ -28,16 +28,16 @@ public partial class PhysicalCharacter : Node, IActorComponent, IMovement3D
 	{
 		var moveDirection = MoveDirection.Normalized();
 		var unitVel = _targetVelocity.Normalized();
-		float velocityDotProduct = unitVel.Dot(PhysicsComponent.Velocity.Normalized());
+		float velocityDotProduct = unitVel.Dot(PhysicsComponent3D.Velocity.Normalized());
 		float acceleration = Acceleration * AccelerationCurve.Sample(velocityDotProduct);
 		var goalVelocity = moveDirection * MaxSpeed;
 		_targetVelocity = _targetVelocity.MoveToward(goalVelocity, acceleration * delta);
 
-		var currentHorizontalVel = new Vector3(PhysicsComponent.Velocity.X, 0, PhysicsComponent.Velocity.Z);
+		var currentHorizontalVel = new Vector3(PhysicsComponent3D.Velocity.X, 0, PhysicsComponent3D.Velocity.Z);
 		var maxAcceleration = MaxAccelerationForce * AccelerationCurve.Sample(velocityDotProduct);
 		var neededAcceleration = ((_targetVelocity - currentHorizontalVel) / delta).LimitLength(maxAcceleration);
 
-		PhysicsComponent.ApplyForce(neededAcceleration);
+		PhysicsComponent3D.ApplyForce(neededAcceleration);
 	}
 
 
@@ -45,7 +45,7 @@ public partial class PhysicalCharacter : Node, IActorComponent, IMovement3D
 
 	public void Setup()
 	{
-		PhysicsComponent = Actor.GetComponent<IPhysicsComponent>();
+		PhysicsComponent3D = Actor.GetComponent<IPhysicsComponent3D>();
 	}
 
 	public void MoveInDirection(Vector3 direction)

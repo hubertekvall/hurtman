@@ -4,7 +4,7 @@ namespace Hurtman.Actors.Components.Physics;
 
 [GlobalClass]
 [Tool]
-public partial class ActorRigidBody : RigidBody3D, IActorComponent, IPhysicsComponent, IMessageHandler
+public partial class ActorRigidBody : RigidBody3D, IActorComponent, IPhysicsComponent3D, IMessageHandler
 {
 	public override void _IntegrateForces(PhysicsDirectBodyState3D state)
 	{

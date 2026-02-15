@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Godot;
+using Hurtman.Actors.Components;
 using Hurtman.Utilities.Pooling;
 
 namespace Hurtman.Actors;
@@ -10,8 +11,10 @@ namespace Hurtman.Actors;
 [GlobalClass, Tool]
 public partial class Actor : Node, IPoolable<Actor>
 {
-	public Dictionary<Type, IActorComponent> Components { get; } = new();
-
+	private Dictionary<Type, IActorComponent> Components { get; } = new();
+	public ActorMessage InitMessage { get; set; } 
+	
+	
 	public override void _Ready()
 	{
 		GatherComponents();
@@ -19,20 +22,25 @@ public partial class Actor : Node, IPoolable<Actor>
 		CallDeferred(MethodName.PostReady);
 	}
 
-	public void GatherComponents()
+	private void GatherComponents()
 	{
-		var _components = FindChildren("*");
+		var callableComponents = FindChildren("*");
 
-		foreach (Node component in _components)
+		foreach (Node component in callableComponents)
 		{
 			if (component is IActorComponent actorComponent)
 			{
 				Components.Add(actorComponent.GetType(), actorComponent);
+				if (actorComponent is IMessageHandler messageHandler)
+				{
+					messageHandler.OnMessage(InitMessage);
+				}
+				
 			}
 		}
 	}
 
-	public void SetupComponents()
+	private void SetupComponents()
 	{
 		foreach (IActorComponent component in Components.Values)
 		{
@@ -42,7 +50,9 @@ public partial class Actor : Node, IPoolable<Actor>
 	}
 
 
-	public virtual void PostReady()
+
+
+	protected virtual void PostReady()
 	{
 	}
 
@@ -73,7 +83,7 @@ public partial class Actor : Node, IPoolable<Actor>
 	}
 
 
-	public void ReceiveMessage(ActorMessage message)
+	private void ReceiveMessage(ActorMessage message)
 	{
 		foreach (var component in Components.Values)
 		{
@@ -83,17 +93,18 @@ public partial class Actor : Node, IPoolable<Actor>
 			}
 		}
 	}
+	
 
 	public void Kill(DeathCause cause)
 	{
 		if (IsQueuedForDeletion()) return;
 		
-		if (Pool?.Return(this) != null)
-		{
-			GetParent().RemoveChild(this);
-			return;
-		}
-		
+		//if (Pool.Return(this))
+		//{
+			//GetParent().RemoveChild(this);
+			//return;
+		//}
+		//
 		BroadCastMessage(new DeathMessage(cause));
 		QueueFree();
 	}

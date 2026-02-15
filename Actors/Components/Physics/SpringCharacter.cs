@@ -14,20 +14,20 @@ public partial class SpringCharacter : Node, IActorComponent, IMovement3D
 	{
 	}
 
-	public IPhysicsComponent PhysicsComponent { get; set; }
+	public IPhysicsComponent3D PhysicsComponent3D { get; set; }
 	
 	private void SpringFloat(float delta)
 	{
 		
 		// Raycast downward from the physics component
-		var spaceState = PhysicsComponent.GetWorld3D().DirectSpaceState;
-		var rayOrigin = PhysicsComponent.GlobalTransform.Origin;
+		var spaceState = PhysicsComponent3D.GetWorld3D().DirectSpaceState;
+		var rayOrigin = PhysicsComponent3D.GlobalTransform.Origin;
 		var rayEnd = rayOrigin + Vector3.Down * (RideHeight * 2); // Cast twice the ride height
 
 		var query = PhysicsRayQueryParameters3D.Create(rayOrigin, rayEnd);
 		query.CollideWithBodies = true;
 		query.CollideWithAreas = false;
-		query.Exclude = [PhysicsComponent.GetRid()]; // Don't hit self
+		query.Exclude = [PhysicsComponent3D.GetRid()]; // Don't hit self
 
 		var result = spaceState.IntersectRay(query);
 
@@ -52,17 +52,17 @@ public partial class SpringCharacter : Node, IActorComponent, IMovement3D
 			}
 		}
 		
-		var rayDirectionVelocity = Vector3.Down.Dot(PhysicsComponent.Velocity);
+		var rayDirectionVelocity = Vector3.Down.Dot(PhysicsComponent3D.Velocity);
 		var otherDirectionVelocity = Vector3.Down.Dot(otherVelocity);
 		var relativeVelocity = rayDirectionVelocity - otherDirectionVelocity;
 
 		var compressionDistance = RideHeight - hitDistance;
 
 		// Spring force = strength * compression - damping * relative velocity
-		var springForce = (compressionDistance * RideSpringStrength) - (PhysicsComponent.Velocity.Y * RideSpringDamper);
+		var springForce = (compressionDistance * RideSpringStrength) - (PhysicsComponent3D.Velocity.Y * RideSpringDamper);
 
 		// Apply force upward
-		PhysicsComponent.ApplyForce(Vector3.Up * springForce);
+		PhysicsComponent3D.ApplyForce(Vector3.Up * springForce);
 		
 		if (hitRigidBody != null)
 		{
@@ -85,7 +85,7 @@ public partial class SpringCharacter : Node, IActorComponent, IMovement3D
 
 	public void Setup()
 	{
-		PhysicsComponent = Actor.GetComponent<IPhysicsComponent>();
+		PhysicsComponent3D = Actor.GetComponent<IPhysicsComponent3D>();
 	}
 
 

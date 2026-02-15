@@ -8,9 +8,12 @@ public partial class OneShotParticles3D : CpuParticles3D, IActorComponent
 	
 	public Actor Actor { get; set; }
 	
+
+	
 	public  void  Setup()
 	{
-		OneShot = true;
-		Emitting = true;
+		Restart();	
 	}
+	
+
 }

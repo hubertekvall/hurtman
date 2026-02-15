@@ -6,7 +6,7 @@ namespace Hurtman.Actors.Components.Physics;
 
 [GlobalClass]
 [Tool]
-public partial class ActorCharacterBody : CharacterBody3D, IActorComponent, IPhysicsComponent
+public partial class ActorCharacterBody : CharacterBody3D, IActorComponent, IPhysicsComponent3D
 {
 	public Actor Actor { get; set; }
 	public Vector3 AngularVelocity { get; set; }
