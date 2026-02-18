@@ -1,96 +1,119 @@
+using System.Diagnostics;
 using Godot;
-
 namespace Hurtman.Actors.Components.Physics;
 [GlobalClass, Tool]
-public partial class SpringCharacter : Node, IActorComponent, IMovement3D
+public partial class SpringCharacter : Node, IActorComponent, IPhysicsHandler
 {
-	
 	[Export] public float RideHeight { get; set; } = 2.0f;
 	[Export] public float RideSpringStrength { get; set; } = 50.0f;
 	[Export] public float RideSpringDamper { get; set; } = 5.0f;
-
-
-	public void MoveInDirection(Vector3 direction)
+	[Export] public float RideCastFactor { get; set; } = 1.0f;
+	[Export] public float LookAheadDistance { get; set; } = 2.0f;
+	[Export] public float CastRadius { get; set; } = 0.5f;
+	[Export]
+	public bool Debug
 	{
+		get => _debugNode != null;
+		set => SetDebug(value);
 	}
-
+	private Control? _debugNode;
+	private Vector3 _rayOrigin;
 	public IPhysicsComponent3D PhysicsComponent3D { get; set; }
-	
+	private void SetDebug(bool value)
+	{
+		if (!value)
+		{
+			_debugNode?.QueueFree();
+			return;
+		}
+		_debugNode = _debugNode ?? new Control();
+		AddChild(_debugNode);
+		_debugNode.Connect(CanvasItem.SignalName.Draw, Callable.From(DrawDebug));
+	}
+	private void DrawDebug()
+	{
+		var camera = GetViewport().GetCamera3D();
+		var origin = camera?.UnprojectPosition(_rayOrigin) ?? Vector2.Zero;
+		var end = camera?.UnprojectPosition(_rayOrigin + Vector3.Down * (RideHeight * RideCastFactor)) ?? Vector2.Zero;
+		_debugNode?.DrawLine(origin, end, Colors.Red, 2.0f, true);
+	}
 	private void SpringFloat(float delta)
 	{
-		
-		// Raycast downward from the physics component
+		var speed = (PhysicsComponent3D.Velocity * new Vector3(1, 0, 1)).Length();
+		var lookAhead = PhysicsComponent3D.Velocity.Normalized() * Mathf.Min(speed * speed, LookAheadDistance);
+		_rayOrigin = _rayOrigin.Lerp(PhysicsComponent3D.GlobalTransform.Origin + lookAhead, 10.0f * delta);
+		var rayOrigin = _rayOrigin;
+
 		var spaceState = PhysicsComponent3D.GetWorld3D().DirectSpaceState;
-		var rayOrigin = PhysicsComponent3D.GlobalTransform.Origin;
-		var rayEnd = rayOrigin + Vector3.Down * (RideHeight * 2); // Cast twice the ride height
+		var castEnd = rayOrigin + Vector3.Down * (RideHeight * RideCastFactor);
 
-		var query = PhysicsRayQueryParameters3D.Create(rayOrigin, rayEnd);
-		query.CollideWithBodies = true;
-		query.CollideWithAreas = false;
-		query.Exclude = [PhysicsComponent3D.GetRid()]; // Don't hit self
-
-		var result = spaceState.IntersectRay(query);
-
-		if (result.Count == 0) return; // No ground detected
-
-		var hitDistance = rayOrigin.DistanceTo((Vector3)result["position"]);
-		var hitPosition = (Vector3)result["position"];
-		
-		
-		// Calculate spring force
-		var rayDirection = Vector3.Down;
-		var otherVelocity = Vector3.Zero; // Assume ground is static (could get from hit rigidbody if needed)
-		
-		RigidBody3D hitRigidBody = null;
-		if (result.ContainsKey("collider"))
+		// Shape cast using a sphere
+		var shape = new SphereShape3D { Radius = CastRadius };
+		var query = new PhysicsShapeQueryParameters3D
 		{
-			var collider = result["collider"].As<Node>();
+			Shape = shape,
+			Transform = new Transform3D(Basis.Identity, rayOrigin),
+			Motion = Vector3.Down * (RideHeight * RideCastFactor),
+			CollideWithBodies = true,
+			CollideWithAreas = false,
+			Exclude = [PhysicsComponent3D.GetRid()]
+		};
+
+		var results = spaceState.CastMotion(query);
+		// CastMotion returns [safe_fraction, unsafe_fraction] — no hit if safe == 1.0
+		if (results[0] >= 1.0f) return;
+
+		// Reconstruct hit distance from the safe fraction
+		var castDistance = RideHeight * RideCastFactor;
+		var hitDistance = results[0] * castDistance;
+		var hitPosition = rayOrigin + Vector3.Down * hitDistance;
+
+		// Get the collider for rigidbody interaction
+		var otherVelocity = Vector3.Zero;
+		RigidBody3D hitRigidBody = null;
+
+		var contactResults = spaceState.IntersectShape(new PhysicsShapeQueryParameters3D
+		{
+			Shape = shape,
+			Transform = new Transform3D(Basis.Identity, rayOrigin + Vector3.Down * (hitDistance + CastRadius * 0.5f)),
+			CollideWithBodies = true,
+			CollideWithAreas = false,
+			Exclude = [PhysicsComponent3D.GetRid()]
+		});
+
+		foreach (var contact in contactResults)
+		{
+			var collider = contact["collider"].As<Node>();
 			if (collider is RigidBody3D rigidBody)
 			{
 				hitRigidBody = rigidBody;
 				otherVelocity = rigidBody.LinearVelocity;
+				break;
 			}
 		}
-		
+
 		var rayDirectionVelocity = Vector3.Down.Dot(PhysicsComponent3D.Velocity);
 		var otherDirectionVelocity = Vector3.Down.Dot(otherVelocity);
 		var relativeVelocity = rayDirectionVelocity - otherDirectionVelocity;
-
 		var compressionDistance = RideHeight - hitDistance;
+		var springForce = (compressionDistance * RideSpringStrength) -
+						  (PhysicsComponent3D.Velocity.Y * RideSpringDamper);
 
-		// Spring force = strength * compression - damping * relative velocity
-		var springForce = (compressionDistance * RideSpringStrength) - (PhysicsComponent3D.Velocity.Y * RideSpringDamper);
-
-		// Apply force upward
 		PhysicsComponent3D.ApplyForce(Vector3.Up * springForce);
-		
+
 		if (hitRigidBody != null)
 		{
-			// Force magnitude depends on our mass and the spring force
-			var forceToApply = Vector3.Down * springForce;
-		
-			// Apply force at the hit position for realistic torque
-			hitRigidBody.ApplyForce(forceToApply, hitPosition - hitRigidBody.GlobalPosition);
+			hitRigidBody.ApplyForce(Vector3.Down * springForce, hitPosition - hitRigidBody.GlobalPosition);
 		}
-		
 	}
-
 	public Actor Actor { get; set; }
 	public void PhysicsTick(float delta)
 	{
 		SpringFloat(delta);
+		_debugNode?.QueueRedraw();
 	}
-
-
-
 	public void Setup()
 	{
 		PhysicsComponent3D = Actor.GetComponent<IPhysicsComponent3D>();
-	}
-
-
-	public void ProcessTick(float delta)
-	{
-		
 	}
 }

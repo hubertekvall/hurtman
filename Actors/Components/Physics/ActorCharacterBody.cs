@@ -16,6 +16,11 @@ public partial class ActorCharacterBody : CharacterBody3D, IActorComponent, IPhy
 		_velocityBuffer += force;
 	}
 
+	public void ApplyImpulse(Vector3 impulse, Vector3? position = null)
+	{
+		Velocity += impulse;
+	}
+
 	public void ApplyTorque(Vector3 torque)
 	{
 		

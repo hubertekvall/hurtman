@@ -13,5 +13,6 @@ public interface IPhysicsComponent3D : IPhysicsHandler, IProcessHandler
 	public Vector3 AngularVelocity { get; set; }
 	public float Damping { get; set; }
 	public void ApplyForce(Vector3 force, Vector3? position = null);
+	public void ApplyImpulse(Vector3 impulse, Vector3? position = null);
 	public void ApplyTorque(Vector3 torque);
 }

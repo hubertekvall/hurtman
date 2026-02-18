@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://b0834xm7tdif1"]
+
+[ext_resource type="Script" uid="uid://bj5uyuya0qv80" path="res://Actors/Actor.cs" id="1_gubu7"]
+[ext_resource type="Script" uid="uid://bb4oa64iaiqye" path="res://Actors/Components/Physics/ActorRigidBody.cs" id="2_kkiur"]
+[ext_resource type="Script" uid="uid://bgnjgxmq72byi" path="res://Actors/Components/Physics/LookAtVelocity3D.cs" id="3_sq4t0"]
+[ext_resource type="Script" uid="uid://q6j75mmlwwig" path="res://Actors/Components/Physics/SpringCharacter.cs" id="4_sq4t0"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kkiur"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_kkiur"]
+
+[node name="Doodad" type="Node" unique_id=1314860546]
+script = ExtResource("1_gubu7")
+
+[node name="ActorRigidBody" type="RigidBody3D" parent="." unique_id=882840796]
+linear_damp = 0.191
+script = ExtResource("2_kkiur")
+metadata/_custom_type_script = "uid://bb4oa64iaiqye"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ActorRigidBody" unique_id=999889444]
+shape = SubResource("CapsuleShape3D_kkiur")
+debug_color = Color(0.72020894, 0.059778422, 0.2789299, 1)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ActorRigidBody" unique_id=2049069141]
+mesh = SubResource("CapsuleMesh_kkiur")
+script = ExtResource("3_sq4t0")
+
+[node name="SpringCharacter" type="Node" parent="." unique_id=728712543]
+script = ExtResource("4_sq4t0")
+metadata/_custom_type_script = "uid://q6j75mmlwwig"

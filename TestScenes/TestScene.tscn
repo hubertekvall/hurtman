@@ -7,12 +7,14 @@
 [ext_resource type="Script" uid="uid://bb4oa64iaiqye" path="res://Actors/Components/Physics/ActorRigidBody.cs" id="4_l7v2s"]
 [ext_resource type="Script" uid="uid://debor77bhrxik" path="res://Actors/Components/Physics/PhysicalCharacter.cs" id="5_d8xex"]
 [ext_resource type="Script" uid="uid://clhagtjl5mkjm" path="res://Actors/Components/Physics/CameraMatchingController.cs" id="6_4qx8n"]
+[ext_resource type="Script" uid="uid://0iusamx5i1x3" path="res://Actors/Components/Physics/AttractorsRepulsors/VortexAffector.cs" id="6_xwwdg"]
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="7_h7gco"]
 [ext_resource type="Script" uid="uid://q6j75mmlwwig" path="res://Actors/Components/Physics/SpringCharacter.cs" id="7_xwwdg"]
 [ext_resource type="Script" uid="uid://d16kod87wlvff" path="res://Actors/Components/Physics/UprightTorque.cs" id="8_aoex4"]
 [ext_resource type="Script" uid="uid://csjccrhj5wnx7" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="8_db272"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="9_i7i2i"]
 [ext_resource type="Script" uid="uid://b8hhnqsugykly" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="10_db272"]
+[ext_resource type="PackedScene" uid="uid://b0834xm7tdif1" path="res://TestScenes/Doodad.tscn" id="15_xwwdg"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_33li0"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -35,7 +37,7 @@ ssil_enabled = true
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_db272"]
 albedo_color = Color(0.7202103, 0.7202103, 0.7202103, 1)
 albedo_texture = ExtResource("1_i7i2i")
-uv1_scale = Vector3(200, 200, 100)
+uv1_scale = Vector3(100, 100, 100)
 texture_filter = 5
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_l7v2s"]
@@ -49,19 +51,13 @@ size = Vector3(16, 1, 16)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ntgmx"]
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_xwwdg"]
+radius = 20.0
+
 [sub_resource type="Curve" id="Curve_l7v2s"]
 _limits = [1.0, 2.0, 0.0, 1.0]
 _data = [Vector2(0, 2), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 2
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l7v2s"]
-diffuse_mode = 1
-
-[sub_resource type="BoxMesh" id="BoxMesh_6lhup"]
-size = Vector3(4, 4, 4)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_daqqq"]
-size = Vector3(4, 4, 4)
 
 [sub_resource type="Resource" id="Resource_l7v2s"]
 script = ExtResource("9_i7i2i")
@@ -70,6 +66,18 @@ script = ExtResource("9_i7i2i")
 script = ExtResource("10_db272")
 fov = 49.1
 metadata/_custom_type_script = "uid://b8hhnqsugykly"
+
+[sub_resource type="BoxMesh" id="BoxMesh_aoex4"]
+size = Vector3(8, 8, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_c8bkk"]
+size = Vector3(8, 8, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_c8bkk"]
+size = Vector3(8, 8, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hxep8"]
+size = Vector3(8, 8, 10)
 
 [node name="Node3D" type="Node3D" unique_id=752612385]
 
@@ -97,7 +105,7 @@ metadata/_custom_type_script = "uid://bj5uyuya0qv80"
 
 [node name="Instantiator3D" type="Node" parent="Actor" unique_id=235186802]
 script = ExtResource("2_ikd3r")
-VelocityTreshold = 0.0
+VelocityTreshold = 2000.0
 ActorScene = ExtResource("4_d8xex")
 PoolName = "dustcloud"
 
@@ -114,10 +122,24 @@ mesh = SubResource("CapsuleMesh_33li0")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Actor/ActorRigidBody" unique_id=1022297658]
 shape = SubResource("CapsuleShape3D_ntgmx")
 
+[node name="VortexAffector" type="ShapeCast3D" parent="Actor/ActorRigidBody" unique_id=523566426]
+enabled = false
+shape = SubResource("SphereShape3D_xwwdg")
+target_position = Vector3(0, 0, 0)
+debug_shape_custom_color = Color(0.39106378, 4.061032e-07, 1.4439226e-07, 1)
+script = ExtResource("6_xwwdg")
+RadialDamping = 0.686
+UseLocalUp = false
+Force = 50.0
+DepthMultiplier = 2.0
+Radius = 20.0
+Continuous = true
+metadata/_custom_type_script = "uid://0iusamx5i1x3"
+
 [node name="PhysicalCharacterController" type="Node" parent="Actor" unique_id=2109179449]
 script = ExtResource("5_d8xex")
 MaxSpeed = 20.0
-Acceleration = 10.0
+Acceleration = 40.0
 MaxAccelerationForce = 20.0
 AccelerationCurve = SubResource("Curve_l7v2s")
 
@@ -127,41 +149,23 @@ metadata/_custom_type_script = "uid://clhagtjl5mkjm"
 
 [node name="SpringCharacter" type="Node" parent="Actor" unique_id=440590014]
 script = ExtResource("7_xwwdg")
-RideHeight = 3.0
+RideHeight = 1.3
+RideSpringStrength = 400.0
+RideSpringDamper = 40.0
+RideCastFactor = 2.0
+LookAheadDistance = 1.0
+Debug = true
 metadata/_custom_type_script = "uid://q6j75mmlwwig"
 
 [node name="UprightTorque" type="Node" parent="Actor" unique_id=1589554692]
 script = ExtResource("8_aoex4")
-metadata/_custom_type_script = "uid://d16kod87wlvff"
-
-[node name="Actor2" type="Node" parent="." unique_id=1830411923]
-script = ExtResource("2_d8xex")
-metadata/_custom_type_script = "uid://bj5uyuya0qv80"
-
-[node name="ActorRigidBody" type="RigidBody3D" parent="Actor2" unique_id=355948973]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1242697, -0.051134348)
-linear_damp = 0.2
-script = ExtResource("4_l7v2s")
-metadata/_custom_type_script = "uid://bb4oa64iaiqye"
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Actor2/ActorRigidBody" unique_id=762427008]
-material_override = SubResource("StandardMaterial3D_l7v2s")
-mesh = SubResource("BoxMesh_6lhup")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Actor2/ActorRigidBody" unique_id=1157091850]
-shape = SubResource("BoxShape3D_daqqq")
-
-[node name="SpringCharacter" type="Node" parent="Actor2" unique_id=914745602]
-script = ExtResource("7_xwwdg")
-metadata/_custom_type_script = "uid://q6j75mmlwwig"
-
-[node name="UprightTorque" type="Node" parent="Actor2" unique_id=996469374]
-script = ExtResource("8_aoex4")
+TorqueStrength = 1000.0
+TorqueDamping = 5.0
 metadata/_custom_type_script = "uid://d16kod87wlvff"
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=519166994]
 physics_interpolation_mode = 1
-transform = Transform3D(0.7071067, -0.41483513, 0.5726359, 0, 0.8098294, 0.5866654, -0.7071068, -0.41483507, 0.5726358, 10, 16.999184, 10)
+transform = Transform3D(0.7071068, -0.40824828, 0.57735026, 2.9802322e-08, 0.8164966, 0.57735026, -0.7071067, -0.40824828, 0.5773503, 15, 21.754185, 15)
 top_level = true
 fov = 49.1
 
@@ -172,7 +176,7 @@ script = ExtResource("7_h7gco")
 metadata/_custom_type_script = "uid://bd046eokvcnu2"
 
 [node name="PhantomCamera3D" type="Node3D" parent="." unique_id=675112831 node_paths=PackedStringArray("follow_target", "look_at_target")]
-transform = Transform3D(0.7071032, -0.41483507, 0.57263577, 0, 0.8098293, 0.5866653, -0.7071033, -0.414835, 0.5726357, 10, 16.999184, 10)
+transform = Transform3D(0.7070801, -0.40824822, 0.57735026, 2.9801196e-08, 0.8164965, 0.57735026, -0.70708, -0.40824822, 0.5773503, 15, 21.754185, 15)
 top_level = true
 script = ExtResource("8_db272")
 follow_mode = 2
@@ -181,9 +185,100 @@ look_at_mode = 2
 look_at_target = NodePath("../Actor/ActorRigidBody")
 tween_resource = SubResource("Resource_l7v2s")
 camera_3d_resource = SubResource("Resource_i7i2i")
-follow_offset = Vector3(10, 10.245, 10)
+follow_offset = Vector3(15, 15, 15)
 follow_damping = true
 align_transform_with_view = Callable()
 align_position_with_view = Callable()
 align_rotation_with_view = Callable()
 metadata/_custom_type_script = "uid://csjccrhj5wnx7"
+
+[node name="Doodad" parent="." unique_id=1314860546 instance=ExtResource("15_xwwdg")]
+
+[node name="Doodad2" parent="." unique_id=1492862981 instance=ExtResource("15_xwwdg")]
+
+[node name="Doodad3" parent="." unique_id=1318301394 instance=ExtResource("15_xwwdg")]
+
+[node name="Doodad4" parent="." unique_id=822315753 instance=ExtResource("15_xwwdg")]
+
+[node name="Doodad5" parent="." unique_id=1703717004 instance=ExtResource("15_xwwdg")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=2007050176]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.3999999, -2.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D" unique_id=1850189004]
+mesh = SubResource("BoxMesh_aoex4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1087088559]
+shape = SubResource("BoxShape3D_c8bkk")
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="." unique_id=1937912532]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.8999999, -3.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D2" unique_id=531851197]
+mesh = SubResource("BoxMesh_aoex4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D2" unique_id=674972834]
+shape = SubResource("BoxShape3D_c8bkk")
+
+[node name="StaticBody3D3" type="StaticBody3D" parent="." unique_id=1614717797]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.3999999, -4.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D3" unique_id=1153306796]
+mesh = SubResource("BoxMesh_aoex4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D3" unique_id=815306040]
+shape = SubResource("BoxShape3D_c8bkk")
+
+[node name="StaticBody3D4" type="StaticBody3D" parent="." unique_id=1661746656]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.8999999, -5.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D4" unique_id=1573976312]
+mesh = SubResource("BoxMesh_aoex4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D4" unique_id=780446394]
+shape = SubResource("BoxShape3D_c8bkk")
+
+[node name="StaticBody3D5" type="StaticBody3D" parent="." unique_id=447915024]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3999997, -6.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D5" unique_id=1409893277]
+mesh = SubResource("BoxMesh_aoex4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D5" unique_id=1406140872]
+shape = SubResource("BoxShape3D_c8bkk")
+
+[node name="StaticBody3D6" type="StaticBody3D" parent="." unique_id=738667298]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.89999974, -7.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D6" unique_id=1526943001]
+mesh = SubResource("BoxMesh_aoex4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D6" unique_id=1717460657]
+shape = SubResource("BoxShape3D_c8bkk")
+
+[node name="StaticBody3D7" type="StaticBody3D" parent="." unique_id=995081697]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3999997, -8.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D7" unique_id=1389610168]
+mesh = SubResource("BoxMesh_aoex4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D7" unique_id=1568097936]
+shape = SubResource("BoxShape3D_c8bkk")
+
+[node name="StaticBody3D8" type="StaticBody3D" parent="." unique_id=887589771]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.100000285, -9.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D8" unique_id=220419539]
+mesh = SubResource("BoxMesh_aoex4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D8" unique_id=1598004342]
+shape = SubResource("BoxShape3D_c8bkk")
+
+[node name="StaticBody3D9" type="StaticBody3D" parent="." unique_id=466051574]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.100000285, -15)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D9" unique_id=1928700212]
+mesh = SubResource("BoxMesh_c8bkk")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D9" unique_id=462469484]
+shape = SubResource("BoxShape3D_hxep8")
