@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using Godot;
+using Godot.Collections;
+
 namespace Hurtman.Actors.Components.Physics;
 [GlobalClass, Tool]
 public partial class SpringCharacter : Node, IActorComponent, IPhysicsHandler
@@ -18,6 +20,7 @@ public partial class SpringCharacter : Node, IActorComponent, IPhysicsHandler
 	}
 	private Control? _debugNode;
 	private Vector3 _rayOrigin;
+	protected Array<Dictionary>? Results;
 	public IPhysicsComponent3D PhysicsComponent3D { get; set; }
 	private void SetDebug(bool value)
 	{
@@ -40,7 +43,7 @@ public partial class SpringCharacter : Node, IActorComponent, IPhysicsHandler
 	private void SpringFloat(float delta)
 	{
 		var speed = (PhysicsComponent3D.Velocity * new Vector3(1, 0, 1)).Length();
-		var lookAhead = PhysicsComponent3D.Velocity.Normalized() * Mathf.Min(speed * speed, LookAheadDistance);
+		var lookAhead = PhysicsComponent3D.Velocity.Normalized() * Mathf.Min(speed, LookAheadDistance);
 		_rayOrigin = _rayOrigin.Lerp(PhysicsComponent3D.GlobalTransform.Origin + lookAhead, 10.0f * delta);
 		var rayOrigin = _rayOrigin;
 
@@ -72,7 +75,7 @@ public partial class SpringCharacter : Node, IActorComponent, IPhysicsHandler
 		var otherVelocity = Vector3.Zero;
 		RigidBody3D hitRigidBody = null;
 
-		var contactResults = spaceState.IntersectShape(new PhysicsShapeQueryParameters3D
+		Results = spaceState.IntersectShape(new PhysicsShapeQueryParameters3D
 		{
 			Shape = shape,
 			Transform = new Transform3D(Basis.Identity, rayOrigin + Vector3.Down * (hitDistance + CastRadius * 0.5f)),
@@ -81,7 +84,7 @@ public partial class SpringCharacter : Node, IActorComponent, IPhysicsHandler
 			Exclude = [PhysicsComponent3D.GetRid()]
 		});
 
-		foreach (var contact in contactResults)
+		foreach (var contact in Results)
 		{
 			var collider = contact["collider"].As<Node>();
 			if (collider is RigidBody3D rigidBody)
@@ -107,13 +110,15 @@ public partial class SpringCharacter : Node, IActorComponent, IPhysicsHandler
 		}
 	}
 	public Actor Actor { get; set; }
-	public void PhysicsTick(float delta)
+	public virtual void PhysicsTick(float delta)
 	{
 		SpringFloat(delta);
 		_debugNode?.QueueRedraw();
 	}
-	public void Setup()
+	public virtual void Setup()
 	{
 		PhysicsComponent3D = Actor.GetComponent<IPhysicsComponent3D>();
+		
+		GD.Print(PhysicsComponent3D);
 	}
 }
