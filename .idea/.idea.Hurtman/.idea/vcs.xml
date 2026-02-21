@@ -9,5 +9,7 @@
     <mapping directory="$PROJECT_DIR$/../ilion" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../kielbasa-town" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../mordindale" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../sorbetto" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../sorbetto/hurtman" vcs="Git" />
   </component>
 </project>
