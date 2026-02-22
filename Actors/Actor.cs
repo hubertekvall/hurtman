@@ -83,6 +83,21 @@ public partial class Actor : Node, IPoolable<Actor>
 	}
 
 
+	public override void _UnhandledInput(InputEvent @event)
+	{
+		if (Engine.IsEditorHint()) return;
+		
+		foreach (var component in Components.Values)
+		{
+			if (component is IInputHandler inputHandler)
+			{
+				inputHandler.OnInput(@event);
+			}
+		}
+	}
+	
+
+
 	private void ReceiveMessage(ActorMessage message)
 	{
 		foreach (var component in Components.Values)
@@ -95,6 +110,8 @@ public partial class Actor : Node, IPoolable<Actor>
 	}
 	
 
+	
+	
 	public void Kill(DeathCause cause)
 	{
 		if (IsQueuedForDeletion()) return;

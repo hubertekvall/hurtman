@@ -1,3 +1,5 @@
+using Godot;
+
 namespace Hurtman.Actors;
 
 public interface IPhysicsHandler
@@ -17,5 +19,5 @@ public interface IMessageHandler
 
 public interface IInputHandler
 {
-    
+    public void OnInput(InputEvent @event);
 }

@@ -5,13 +5,14 @@
 [ext_resource type="Script" uid="uid://45rc68aivlg2" path="res://Actors/Instantiators/CollisionInstantiator3D.cs" id="2_ikd3r"]
 [ext_resource type="PackedScene" uid="uid://cs2me0viaudeq" path="res://TestScenes/ExplosionEffect.tscn" id="4_d8xex"]
 [ext_resource type="Script" uid="uid://bb4oa64iaiqye" path="res://Actors/Components/Physics/ActorRigidBody.cs" id="4_l7v2s"]
-[ext_resource type="Script" uid="uid://debor77bhrxik" path="res://Actors/Components/Physics/PhysicalCharacter.cs" id="5_d8xex"]
-[ext_resource type="Script" uid="uid://clhagtjl5mkjm" path="res://Actors/Components/Physics/CameraMatchingController.cs" id="6_4qx8n"]
-[ext_resource type="Script" uid="uid://0iusamx5i1x3" path="res://Actors/Components/Physics/AttractorsRepulsors/VortexAffector.cs" id="6_xwwdg"]
+[ext_resource type="Script" uid="uid://bbbbcqx43qo5x" path="res://Actors/Components/Physics/Casting/ActorRaycast.cs" id="6_xwwdg"]
+[ext_resource type="Script" uid="uid://oaw7a88cmva5" path="res://Actors/Components/Physics/Movement/PhysicalCharacter.cs" id="7_4qx8n"]
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="7_h7gco"]
-[ext_resource type="Script" uid="uid://d16kod87wlvff" path="res://Actors/Components/Physics/UprightTorque.cs" id="8_aoex4"]
 [ext_resource type="Script" uid="uid://csjccrhj5wnx7" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="8_db272"]
+[ext_resource type="Script" uid="uid://b1j0mogpk6ri4" path="res://Actors/Components/Physics/Movement/CameraMatchingController.cs" id="8_xwwdg"]
+[ext_resource type="Script" uid="uid://y7aokqawstcn" path="res://Actors/Components/Physics/Movement/UprightTorque.cs" id="9_aoex4"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="9_i7i2i"]
+[ext_resource type="Script" uid="uid://xllr8m5oh1sp" path="res://Actors/Components/Physics/Movement/BufferedJump.cs" id="10_4qx8n"]
 [ext_resource type="Script" uid="uid://b8hhnqsugykly" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="10_db272"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_33li0"]
@@ -50,12 +51,9 @@ size = Vector3(16, 1, 16)
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d8xex"]
 height = 1.3574219
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_d8xex"]
-radius = 20.0
-
-[sub_resource type="Curve" id="Curve_l7v2s"]
-_limits = [1.0, 2.0, 0.0, 1.0]
-_data = [Vector2(0, 2), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+[sub_resource type="Curve" id="Curve_4qx8n"]
+_limits = [0.99, 2.0, 0.0, 1.0]
+_data = [Vector2(0, 2), 0.0, 0.0, 0, 0, Vector2(1, 0.99), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="Resource" id="Resource_l7v2s"]
@@ -124,42 +122,31 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.23185873, 0)
 shape = SubResource("CapsuleShape3D_d8xex")
 debug_color = Color(0, 0, 0, 1)
 
-[node name="VortexAffector" type="ShapeCast3D" parent="Actor/ActorRigidBody" unique_id=523566426]
+[node name="ActorRaycast" type="RayCast3D" parent="Actor/ActorRigidBody" unique_id=1363979382]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.2726917, 0)
 enabled = false
-shape = SubResource("SphereShape3D_d8xex")
-target_position = Vector3(0, 0, 0)
-debug_shape_custom_color = Color(0.39106378, 4.061032e-07, 1.4439226e-07, 1)
+target_position = Vector3(0, -2, 0)
 script = ExtResource("6_xwwdg")
-RadialDamping = 0.686
-UseLocalUp = false
-Force = 50.0
-DepthMultiplier = 2.0
-Radius = 20.0
-Continuous = true
-metadata/_custom_type_script = "uid://0iusamx5i1x3"
+metadata/_custom_type_script = "uid://bbbbcqx43qo5x"
 
 [node name="PhysicalCharacterController" type="Node" parent="Actor" unique_id=2109179449]
-script = ExtResource("5_d8xex")
-MaxSpeed = 10.0
-Acceleration = 200.0
-MaxAccelerationForce = 100.0
-AccelerationCurve = SubResource("Curve_l7v2s")
-RideHeight = 1.5
-RideSpringStrength = 100.0
-RideSpringDamper = 10.0
-RideCastFactor = 2.0
-CastRadius = 0.25
-Debug = true
+script = ExtResource("7_4qx8n")
+MaxSpeed = 8.0
+Acceleration = 9.0
+MaxAccelerationForce = 40.0
+AccelerationCurve = SubResource("Curve_4qx8n")
 
 [node name="CameraMatchingController" type="Node" parent="Actor" unique_id=620540443]
-script = ExtResource("6_4qx8n")
+script = ExtResource("8_xwwdg")
 metadata/_custom_type_script = "uid://clhagtjl5mkjm"
 
 [node name="UprightTorque" type="Node" parent="Actor" unique_id=1589554692]
-script = ExtResource("8_aoex4")
-TorqueStrength = 500.0
-TorqueDamping = 5.0
+script = ExtResource("9_aoex4")
 metadata/_custom_type_script = "uid://d16kod87wlvff"
+
+[node name="Node" type="Node" parent="Actor" unique_id=1132743038]
+script = ExtResource("10_4qx8n")
+ImpulseFraction = 0.4
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=519166994]
 physics_interpolation_mode = 1

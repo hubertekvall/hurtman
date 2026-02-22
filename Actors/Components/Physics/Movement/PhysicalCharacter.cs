@@ -1,33 +1,42 @@
 using Godot;
 using Hurtman.Actors.Components.Physics;
+using Hurtman.Actors.Components.Physics.Casting;
 
 namespace Hurtman.Actors.Components;
 
 [GlobalClass, Tool]
-public partial class PhysicalCharacter : SpringCharacter, IMovement3D
+public partial class PhysicalCharacter : Node, IActorComponent, IMovement3D
 {
-
-
 	[Export] public float MaxSpeed { get; set; }
 	[Export] public float Acceleration { get; set; }
 	[Export] public float MaxAccelerationForce { get; set; }
 	[Export] public Curve AccelerationCurve { get; set; }
 
 	private Vector3 _targetVelocity;
-	
+
 	public Vector3 MoveDirection { get; set; }
+
+	public IPhysicsComponent3D PhysicsComponent3D { get; set; }
+
+	private ActorRaycast ActorRaycast { get; set; }
+
 
 	public Actor Actor { get; set; }
 
-	public override void PhysicsTick(float delta)
+	public void Setup()
 	{
-		base.PhysicsTick(delta);
+		PhysicsComponent3D = Actor.GetComponent<IPhysicsComponent3D>();
+		ActorRaycast = Actor.GetComponent<ActorRaycast>();
+	}
+
+	public void PhysicsTick(float delta)
+	{
 		MoveCharacter(delta);
 	}
 
 	private void MoveCharacter(float delta)
 	{
-		if(PhysicsComponent3D == null) return;
+		if (PhysicsComponent3D == null) return;
 		var moveDirection = MoveDirection.Normalized();
 		var unitVel = _targetVelocity.Normalized();
 		float velocityDotProduct = unitVel.Dot(PhysicsComponent3D.Velocity.Normalized());
@@ -39,13 +48,10 @@ public partial class PhysicalCharacter : SpringCharacter, IMovement3D
 		var maxAcceleration = MaxAccelerationForce * AccelerationCurve.Sample(velocityDotProduct);
 		var neededAcceleration = ((_targetVelocity - currentHorizontalVel) / delta).LimitLength(maxAcceleration);
 
-		neededAcceleration = Results?.Count > 0 ? neededAcceleration : neededAcceleration * 0.1f;
-		
+		neededAcceleration = ActorRaycast.IsColliding() ? neededAcceleration : neededAcceleration * 0.1f;
+
 		PhysicsComponent3D.ApplyForce(neededAcceleration);
 	}
-
-
-
 
 
 	public void MoveInDirection(Vector3 direction)
@@ -56,6 +62,5 @@ public partial class PhysicalCharacter : SpringCharacter, IMovement3D
 
 	public void ProcessTick(float delta)
 	{
-		
 	}
 }
