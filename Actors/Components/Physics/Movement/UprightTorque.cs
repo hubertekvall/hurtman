@@ -11,7 +11,10 @@ public partial class UprightTorque : Node, IActorComponent, IMovement3D
 	
 	[Export]
 	public float TorqueDamping = 0.5f;
-	
+
+
+	[Export] public float MaxLeanAngleDegrees { get; set; } = 30.0f;
+
 	public Actor Actor { get; set; }
 	public void Setup()
 	{
@@ -20,33 +23,28 @@ public partial class UprightTorque : Node, IActorComponent, IMovement3D
 
 	public void PhysicsTick(float delta)
 	{
-		// Get the current up direction of the rigidbody
 		var currentUp = PhysicsComponent3D.GlobalTransform.Basis.Y;
-
-		// Desired up direction (world up)
 		var desiredUp = Vector3.Up;
 
-		// Calculate the axis of rotation needed using cross product
 		var rotationAxis = currentUp.Cross(desiredUp);
-
-		// The magnitude of the cross product tells us how far we are from upright
-		// (sin of the angle between the vectors)
 		var rotationMagnitude = rotationAxis.Length();
 
-		// If we're already upright (or very close), don't apply torque
 		if (rotationMagnitude < 0.001f)
 			return;
 
-		// Normalize the axis
 		rotationAxis = rotationAxis.Normalized();
 
-		// Calculate the angle between current and desired up
 		var angle = Mathf.Asin(Mathf.Clamp(rotationMagnitude, -1f, 1f));
+		var maxLeanAngleRad = Mathf.DegToRad(MaxLeanAngleDegrees);
 
+		// Clamp the target angle — if we're within the limit, target is 0 (fully upright).
+		// If we're past the limit, only correct back to the boundary.
+		var targetAngle = Mathf.Max(0f, angle - maxLeanAngleRad);
 
-		var torque = rotationAxis * angle * TorqueStrength;
+		if (targetAngle < 0.001f)
+			return;
 
-		// Apply damping based on current angular velocity
+		var torque = rotationAxis * targetAngle * TorqueStrength;
 		var damping = -PhysicsComponent3D.AngularVelocity * TorqueDamping;
 
 		PhysicsComponent3D.ApplyTorque(torque + damping);
