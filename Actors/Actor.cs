@@ -9,7 +9,7 @@ using Hurtman.Utilities.Pooling;
 namespace Hurtman.Actors;
 
 [GlobalClass, Tool]
-public partial class Actor : Node, IPoolable<Actor>
+public partial class Actor : Node
 {
 	private Dictionary<Type, IActorComponent> Components { get; } = new();
 	public ActorMessage InitMessage { get; set; } 
@@ -116,12 +116,6 @@ public partial class Actor : Node, IPoolable<Actor>
 	{
 		if (IsQueuedForDeletion()) return;
 		
-		//if (Pool.Return(this))
-		//{
-			//GetParent().RemoveChild(this);
-			//return;
-		//}
-		//
 		BroadCastMessage(new DeathMessage(cause));
 		QueueFree();
 	}
@@ -160,8 +154,7 @@ public partial class Actor : Node, IPoolable<Actor>
 	{
 		return Components.Values.OfType<T>();
 	}
-
-	public ObjectPool<Actor> Pool { get; set; }
+	
 }
 
 public static class NodeExtensions

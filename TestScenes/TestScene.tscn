@@ -138,11 +138,9 @@ AccelerationCurve = SubResource("Curve_4qx8n")
 
 [node name="CameraMatchingController" type="Node" parent="Actor" unique_id=620540443]
 script = ExtResource("8_xwwdg")
-metadata/_custom_type_script = "uid://clhagtjl5mkjm"
 
 [node name="UprightTorque" type="Node" parent="Actor" unique_id=1589554692]
 script = ExtResource("9_aoex4")
-metadata/_custom_type_script = "uid://d16kod87wlvff"
 
 [node name="Node" type="Node" parent="Actor" unique_id=1132743038]
 script = ExtResource("10_4qx8n")

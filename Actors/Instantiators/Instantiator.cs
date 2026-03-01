@@ -17,21 +17,18 @@ public partial class Instantiator : Node, IActorComponent
 
 	
 	[Export]
-	public bool Pooled { get; set; }
-	
-	[Export]
-	public String PoolName { get; set; }
-	
-	private ObjectPool<Actor> _actorPool;
+	public bool Cached { get; set; }
+
+	private CachePool _actorPool;
 	
 	
 	private Actor Instantiate(ActorMessage withMessage = null)
 	{
-
-		var actor = Pooled ? _actorPool.Get(InstantiateActor) : InstantiateActor();
-		actor.Pool = _actorPool;
-		if(withMessage != null) actor.InitMessage = withMessage;
+		var actor = Cached ? _actorPool.Get() : InstantiateActor();
 		AddActorToTree(actor);
+
+		CallDeferred(Actor.MethodName.ReceiveMessage, [withMessage]);
+		
 		return actor;
 	}
 
@@ -54,9 +51,7 @@ public partial class Instantiator : Node, IActorComponent
 
 
 	public Actor Instantiate3D(Vector3 position, Basis basis) => Instantiate(new TeleportMessage3D(position));
-
-
-
+	
 	public Actor Instantiate2D(Vector2 position, Transform2D transform)
 	{
 		// TODO
@@ -66,18 +61,13 @@ public partial class Instantiator : Node, IActorComponent
 	public Actor Actor { get; set; }
 	public void Setup()
 	{
-		if(Pooled)
+		if(Cached)
 		{
-			_actorPool = ObjectPool<Actor>.GetPool(PoolName);
-			_actorPool.Warmup(500, InstantiateActor);
+			_actorPool = new CachePool(1000, InstantiateActor);
+			AddChild(_actorPool);
 		}
+		
 	}
 
-	public override void _Notification(int what)
-	{
-		if (what == Node.NotificationPredelete)
-		{
-			_actorPool.Clean();
-		}
-	}
+	
 }

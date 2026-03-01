@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://bj5uyuya0qv80" path="res://Actors/Actor.cs" id="1_gubu7"]
 [ext_resource type="Script" uid="uid://bb4oa64iaiqye" path="res://Actors/Components/Physics/ActorRigidBody.cs" id="2_kkiur"]
-[ext_resource type="Script" uid="uid://bgnjgxmq72byi" path="res://Actors/Components/Physics/LookAtVelocity3D.cs" id="3_sq4t0"]
-[ext_resource type="Script" uid="uid://q6j75mmlwwig" path="res://Actors/Components/Physics/SpringCharacter.cs" id="4_sq4t0"]
+[ext_resource type="Script" uid="uid://buocxj1etukhl" path="res://Actors/Components/Physics/Visual/LookAtVelocity3D.cs" id="3_sq4t0"]
+[ext_resource type="Script" uid="uid://dlmvur143m7ui" path="res://Actors/Components/Physics/Movement/SpringCharacter.cs" id="4_sq4t0"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kkiur"]
 
