@@ -1,9 +1,10 @@
 # Godot 4+ specific ignores
+.idea/
 .godot/
 .nomedia
 *.uid
 *.cs.uid
-*.project
+*.godot
 *.csproj
 *.sln
 *.user
