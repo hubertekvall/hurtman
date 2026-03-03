@@ -3,6 +3,11 @@
 .nomedia
 *.uid
 *.cs.uid
+*.project
+*.csproj
+*.sln
+*.user
+*.old
 
 # Godot-specific ignores
 .import/
