@@ -32,7 +32,7 @@ public partial class AltitudeControl : Node, IActorComponent, IPhysicsHandler
         
         var offset = position.Y - AltitudeTarget;
 
-        var springForce = (AltitudeStrength * offset) - (AltitudeDamping * velocity.Y);
+        var springForce = (-AltitudeStrength * offset) - (AltitudeDamping * velocity.Y);
 
         PhysicsComponent.ApplyForce(springForce * Vector3.Up);
 
