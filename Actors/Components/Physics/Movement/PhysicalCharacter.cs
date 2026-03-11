@@ -5,7 +5,7 @@ using Hurtman.Actors.Components.Physics.Casting;
 namespace Hurtman.Actors.Components;
 
 [GlobalClass, Tool]
-public partial class PhysicalCharacter : Node, IActorComponent, IMovement3D
+public partial class PhysicalCharacter : Node, IActorComponent, IMovement3D, ISetupHandler
 {
 	[Export] public float MaxSpeed { get; set; }
 	[Export] public float Acceleration { get; set; }
