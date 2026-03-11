@@ -5,8 +5,7 @@
 *.uid
 *.cs.uid
 *.godot
-*.csproj
-*.sln
+
 *.user
 *.old
 
