@@ -1,22 +1,27 @@
 using Godot;
-namespace Hurtman.Actors.Components.Physics;
+
+namespace Hurtman.Actors.Components.Physics.Visual;
 
 public partial class LookAt3D : Node3D, IActorComponent, IProcessHandler
 {
-    public Vector3 LookVector { get; set; }
+    [Export]
+    public float EasingValue { get; set; }
+    
+    protected Vector3 LookVector { get; set; }
     
     public void ProcessTick(float delta)
     {
-       LookTransform();
+       LookTransform(delta);
     }
-    protected virtual void LookTransform()
+    protected virtual void LookTransform(float delta)
     {
-        Vector3 direction = LookVector.Normalized();
-        Vector3 up = Mathf.Abs(direction.Dot(Vector3.Up)) > 0.99f ? Vector3.Forward : Vector3.Up;
-        LookAt(GlobalPosition + direction, up);
+        var direction = LookVector.Normalized();
+        var up = Mathf.Abs(direction.Dot(Vector3.Up)) > 0.99f ? Vector3.Forward : Vector3.Up;
+
+        var xform = GlobalTransform.LookingAt(GlobalPosition + direction, up);
+
+        GlobalTransform = GlobalTransform.InterpolateWith(xform, EasingValue * delta);
     }
     public Actor Actor { get; set; }
-    public void Setup()
-    {
-    }
+ 
 }

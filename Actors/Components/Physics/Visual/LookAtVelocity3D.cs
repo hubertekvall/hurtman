@@ -1,29 +1,24 @@
-using System;
-using Godot;
+namespace Hurtman.Actors.Components.Physics.Visual;
 
-namespace Hurtman.Actors.Components.Physics;
-
-public partial class LookAtVelocity3D : LookAt3D
+public partial class LookAtVelocity3D : Visual.LookAt3D, ISetupHandler
 {
-	public Actor Actor { get; set; }
+	
 	private IPhysicsComponent3D PhysicsComponent { get; set; }
-	public new void Setup()
+	public void Setup()
 	{
 		PhysicsComponent = Actor.GetComponent<IPhysicsComponent3D>();
 	}
 
-
-
-	protected override void LookTransform()
+	
+	protected override void LookTransform(float delta)
 	{
 		if (PhysicsComponent == null) return;
 		
-		Vector3 velocity = PhysicsComponent.Velocity;
+		var velocity = PhysicsComponent.Velocity;
 		if (velocity.LengthSquared() < 0.01f) return;
-
 		LookVector = velocity;
 		
-		base.LookTransform();
+		base.LookTransform(delta);
 
 	}
 }

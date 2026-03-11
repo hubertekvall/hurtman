@@ -21,3 +21,8 @@ public interface IInputHandler
 {
     public void OnInput(InputEvent @event);
 }
+
+public interface ISetupHandler
+{
+    public void Setup();
+}

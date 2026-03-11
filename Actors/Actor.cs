@@ -11,160 +11,156 @@ namespace Hurtman.Actors;
 [GlobalClass, Tool]
 public partial class Actor : Node
 {
-	private Dictionary<Type, IActorComponent> Components { get; } = new();
-	public ActorMessage InitMessage { get; set; } 
-	
-	
-	public override void _Ready()
-	{
-		GatherComponents();
-		SetupComponents();
-		CallDeferred(MethodName.PostReady);
-	}
-
-	private void GatherComponents()
-	{
-		var callableComponents = FindChildren("*");
-
-		foreach (Node component in callableComponents)
-		{
-			if (component is IActorComponent actorComponent)
-			{
-				Components.Add(actorComponent.GetType(), actorComponent);
-				if (actorComponent is IMessageHandler messageHandler)
-				{
-					messageHandler.OnMessage(InitMessage);
-				}
-				
-			}
-		}
-	}
-
-	private void SetupComponents()
-	{
-		foreach (IActorComponent component in Components.Values)
-		{
-			component.Actor = this;
-			component.Setup();
-		}
-	}
+    private Dictionary<Type, IActorComponent> Components { get; } = new();
+    public ActorMessage InitMessage { get; set; }
 
 
+    public override void _Ready()
+    {
+        GatherComponents();
+        SetupComponents();
+        CallDeferred(MethodName.PostReady);
+    }
+
+    private void GatherComponents()
+    {
+        var callableComponents = FindChildren("*");
+
+        foreach (var component in callableComponents)
+        {
+            if (component is not IActorComponent actorComponent) continue;
+            
+            Components.Add(actorComponent.GetType(), actorComponent);
+            if (actorComponent is IMessageHandler messageHandler)
+            {
+                messageHandler.OnMessage(InitMessage);
+            }
+        }
+    }
+
+    private void SetupComponents()
+    {
+        foreach (IActorComponent component in Components.Values)
+        {
+            component.Actor = this;
+
+            if (component is ISetupHandler setupHandler)
+            {
+                setupHandler.Setup();
+            }
+        }
+    }
 
 
-	protected virtual void PostReady()
-	{
-	}
+    protected virtual void PostReady()
+    {
+    }
 
-	public override void _Process(double delta)
-	{
-		if (Engine.IsEditorHint()) return;
+    public override void _Process(double delta)
+    {
+        if (Engine.IsEditorHint()) return;
 
-		foreach (var component in Components.Values)
-		{
-			if (component is IProcessHandler processHandler)
-			{
-				processHandler.ProcessTick((float)delta);
-			}
-		}
-	}
-
-
-	public override void _PhysicsProcess(double delta)
-	{
-		if (Engine.IsEditorHint()) return;
-		foreach (var component in Components.Values)
-		{
-			if (component is IPhysicsHandler physicsHandler)
-			{
-				physicsHandler.PhysicsTick((float)delta);
-			}
-		}
-	}
+        foreach (var component in Components.Values)
+        {
+            if (component is IProcessHandler processHandler)
+            {
+                processHandler.ProcessTick((float)delta);
+            }
+        }
+    }
 
 
-	public override void _UnhandledInput(InputEvent @event)
-	{
-		if (Engine.IsEditorHint()) return;
-		
-		foreach (var component in Components.Values)
-		{
-			if (component is IInputHandler inputHandler)
-			{
-				inputHandler.OnInput(@event);
-			}
-		}
-	}
-	
+    public override void _PhysicsProcess(double delta)
+    {
+        if (Engine.IsEditorHint()) return;
+        foreach (var component in Components.Values)
+        {
+            if (component is IPhysicsHandler physicsHandler)
+            {
+                physicsHandler.PhysicsTick((float)delta);
+            }
+        }
+    }
 
 
-	private void ReceiveMessage(ActorMessage message)
-	{
-		foreach (var component in Components.Values)
-		{
-			if (component is IMessageHandler messageHandler)
-			{
-				messageHandler.OnMessage(message);
-			}
-		}
-	}
-	
+    public override void _UnhandledInput(InputEvent @event)
+    {
+        if (Engine.IsEditorHint()) return;
 
-	
-	
-	public void Kill(DeathCause cause)
-	{
-		if (IsQueuedForDeletion()) return;
-		
-		BroadCastMessage(new DeathMessage(cause));
-		QueueFree();
-	}
-
-	public void RegisterComponent(IActorComponent component)
-	{
-		// component.Actor = this;
-		// Components.Add(component);
-		// component.Setup();
-	}
-
-	public void AddComponent(IActorComponent component)
-	{
-		// Components.Add(component);
-	}
-
-	public void BroadCastMessage(ActorMessage message)
-	{
-		SendMessage(message, this);
-	}
-
-	public void SendMessage(ActorMessage message, Actor recipient)
-	{
-		message.Sender = this;
-
-		recipient.ReceiveMessage(message);
-	}
-
-	public T? GetComponent<T>() where T : class
-	{
-		return Components.Values.OfType<T>().FirstOrDefault();
-	}
+        foreach (var component in Components.Values)
+        {
+            if (component is IInputHandler inputHandler)
+            {
+                inputHandler.OnInput(@event);
+            }
+        }
+    }
 
 
-	public IEnumerable<T>? GetAllComponent<T>() where T : class
-	{
-		return Components.Values.OfType<T>();
-	}
-	
+    private void ReceiveMessage(ActorMessage message)
+    {
+        foreach (var component in Components.Values)
+        {
+            if (component is IMessageHandler messageHandler)
+            {
+                messageHandler.OnMessage(message);
+            }
+        }
+    }
+
+
+    public void Kill(DeathCause cause)
+    {
+        if (IsQueuedForDeletion()) return;
+
+        BroadCastMessage(new DeathMessage(cause));
+        QueueFree();
+    }
+
+    public void RegisterComponent(IActorComponent component)
+    {
+        // component.Actor = this;
+        // Components.Add(component);
+        // component.Setup();
+    }
+
+    public void AddComponent(IActorComponent component)
+    {
+        // Components.Add(component);
+    }
+
+    public void BroadCastMessage(ActorMessage message)
+    {
+        SendMessage(message, this);
+    }
+
+    public void SendMessage(ActorMessage message, Actor recipient)
+    {
+        message.Sender = this;
+
+        recipient.ReceiveMessage(message);
+    }
+
+    public T? GetComponent<T>() where T : class
+    {
+        return Components.Values.OfType<T>().FirstOrDefault();
+    }
+
+
+    public IEnumerable<T>? GetAllComponent<T>() where T : class
+    {
+        return Components.Values.OfType<T>();
+    }
 }
 
 public static class NodeExtensions
 {
-	public static T AddNodeInEditor<T>(this Node node) where T : Node, new()
-	{
-		var addedNode = new T();
-		node.AddChild(addedNode);
-		addedNode.Owner = node.GetTree().EditedSceneRoot;
+    public static T AddNodeInEditor<T>(this Node node) where T : Node, new()
+    {
+        var addedNode = new T();
+        node.AddChild(addedNode);
+        addedNode.Owner = node.GetTree().EditedSceneRoot;
 
-		return addedNode;
-	}
+        return addedNode;
+    }
 }

@@ -19,8 +19,7 @@ public partial class PhysicalCharacter : Node, IActorComponent, IMovement3D
 	public IPhysicsComponent3D PhysicsComponent3D { get; set; }
 
 	private ActorRaycast ActorRaycast { get; set; }
-
-
+	
 	public Actor Actor { get; set; }
 
 	public void Setup()
