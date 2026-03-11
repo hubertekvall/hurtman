@@ -4,7 +4,7 @@ using Godot.Collections;
 
 namespace Hurtman.Actors.Components.Physics;
 [GlobalClass, Tool]
-public partial class SpringCharacter : Node, IActorComponent, IPhysicsHandler
+public partial class SpringCharacter : Node, IActorComponent, IPhysicsHandler, ISetupHandler
 {
 	[Export] public float RideHeight { get; set; } = 2.0f;
 	[Export] public float RideSpringStrength { get; set; } = 50.0f;

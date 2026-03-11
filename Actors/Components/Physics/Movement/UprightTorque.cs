@@ -3,7 +3,7 @@ using Godot;
 namespace Hurtman.Actors.Components;
 
 [GlobalClass, Tool]
-public partial class UprightTorque : Node, IActorComponent, IMovement3D
+public partial class UprightTorque : Node, IActorComponent, IMovement3D, ISetupHandler
 {	
 	
 	[Export]

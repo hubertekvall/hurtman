@@ -13,11 +13,8 @@ public partial class PhysicalCharacter : Node, IActorComponent, IMovement3D, ISe
 	[Export] public Curve AccelerationCurve { get; set; }
 
 	private Vector3 _targetVelocity;
-
 	public Vector3 MoveDirection { get; set; }
-
 	public IPhysicsComponent3D PhysicsComponent3D { get; set; }
-
 	private ActorRaycast ActorRaycast { get; set; }
 	
 	public Actor Actor { get; set; }

@@ -5,7 +5,7 @@ namespace Hurtman.Actors.Components.Physics;
 
 
 [GlobalClass, Tool]
-public partial class CameraMatchingController : Node, IActorComponent, IPhysicsHandler
+public partial class CameraMatchingController : Node, IActorComponent, IPhysicsHandler, ISetupHandler
 {
 	
 	private IMovement3D MovementComponent {get; set;}

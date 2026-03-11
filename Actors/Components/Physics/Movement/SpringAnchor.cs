@@ -2,7 +2,7 @@ using Godot;
 
 namespace Hurtman.Actors.Components.Physics;
 
-public partial class SpringAnchor : IActorComponent, IPhysicsHandler
+public partial class SpringAnchor : IActorComponent, IPhysicsHandler, ISetupHandler
 {
     public IPhysicsComponent3D PhysicsComponent { get; set; }
     public Actor Actor { get; set; }
